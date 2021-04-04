@@ -25,13 +25,42 @@ int main(void) {
 		return 1;
 	}
 	
-	srandom(seed); //Random number generator starting point
+	srandom(seed);
 	//int roll = random();
 	printf("%u\n", num_players);
 	
-	center_value++;
-	printf("%u\n", center_value);
+	//create an array corresponding to length of num_players, give them all 3$
+	int32_t current_player = 0;
 
+	while (num_players > 1) {
+		int num_rolls = 0;
+
+		if () {
+			run_rolls > 0;
+		
+			if () {
+				run_rolls = 1;
+			}
+			if () {
+				run_rolls = 2;
+			}
+			if () {
+				rum_rolls = 3;
+			}
+		}
+
+
+
+
+
+
+
+
+
+
+
+
+	}
 	printf("End of Program\n");
 	
 
