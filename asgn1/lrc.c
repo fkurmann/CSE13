@@ -17,8 +17,8 @@ int main(void) {
 	//typedef enum faciem { PASS, LEFT, RIGHT, CENTER } faces;
 	//faces die[] = {LEFT, RIGHT, CENTER, PASS, PASS, PASS};
 	
-	uint32_t seed, num_rolls, center_value = 0, num_players, current_player = 0, player_left, player_right, roll;
-
+	uint32_t seed, num_rolls, center_value = 0, num_players, original_num_players, current_player = 0;
+	uint32_t winner = 0, player_left, player_right, roll;
 	//Scanner to enter random seed
 	printf("Random seed: ");
 	if (scanf("%u", &seed) < 1) {//check constraints to this if statement*********************************************************
@@ -28,7 +28,7 @@ int main(void) {
 	srandom(seed);
 
 	//Scanner to enter number of players
-	printf("Number of players: ");
+	printf("How many players? ");
 	if (scanf("%u", &num_players) < 1 || num_players > 14) {
 		fprintf(stderr, "Invalid number of players\n");
 		return 1;
@@ -38,8 +38,10 @@ int main(void) {
 	//****************************NO CHANGES ABOVE THIS LINE********************
 
 	//declare and initialize player balance array
+	
+	original_num_players = num_players;
 	int player_balance [num_players];
-	for (uint8_t i = 0; i < num_players; i++) {
+	for (uint32_t i = 0; i < num_players; i++) {
 		player_balance[i] = 3;
 	}
 
@@ -101,8 +103,19 @@ int main(void) {
 		current_player = player_right;
 		printf("Number of players remaining: %u\n", num_players);
 	}
-	//printf("Number of last player: %u\n", current_player);
-	//printf("Rolls for last player: %u\n", num_rolls);
+	// search for winner, the remaining player
+	uint32_t index = 0;
+	while (1) {
+		if (player_balance[index] != 0) {
+			winner = index;
+			break;
+		}
+		index++;
+	}
+
+	printf("Number of last player: %u\n", winner);
+	printf("Name of winner: %s \n", philosophers[winner]);
+	printf("Money left for the last player: %u\n", player_balance[winner]);
 	printf("End of Program\n");
 	return 0;
 }
