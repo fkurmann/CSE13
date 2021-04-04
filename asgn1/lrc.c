@@ -5,11 +5,13 @@
 #include <stdlib.h>
 #include <assert.h>
 
+
 int main(void) {
 	//typedef enum faciem { PASS, LEFT, RIGHT, CENTER } faces;
 	//faces die[] = {LEFT, RIGHT, CENTER, PASS, PASS, PASS};
 	
-	uint32_t seed, num_players, num_rolls, center_value = 0;
+	uint32_t seed, num_rolls, center_value = 0;
+	uint8_t num_players, current_player = 0;
 
 	//Scanner to enter random seed
 	printf("Random seed: ");
@@ -26,7 +28,6 @@ int main(void) {
 	}
 	
 	srandom(seed);
-	//int roll = random();
 	printf("%u\n", num_players);
 	
 	
@@ -34,11 +35,10 @@ int main(void) {
 
 	//declare and initialize player balance array
 	int player_balance [num_players];
-	for (uint32_t i = 0; i < num_players; i++) {
+	for (uint8_t i = 0; i < num_players; i++) {
 		player_balance[i] = 3;
 	}
 
-	uint32_t current_player = 0;
 	while (current_player < num_players) {      //Will eventually become while(num_players > 1)
 		num_rolls = 0;
 
@@ -54,10 +54,27 @@ int main(void) {
 				num_rolls = 3;
 			}
 		}
-
-	current_player++;
-	}
 	
+		uint32_t roll;
+
+		//Roll the dice and conduct the resulting transfers depending on how many rolls a player gets
+		for (uint32_t i = 0; i < num_rolls; i++) {
+			roll = random() % 6
+			printf("%u\n", roll);
+
+			if roll == 0 {
+				//give to left
+			}
+			if roll == 1 {
+				//give to right
+			}
+			if roll == 2 {
+				//give to center
+			center_value++;
+			}
+		}
+		current_player++;
+	}
 	printf("Number of last player: %u\n", current_player);
 	printf("Rolls for last player: %u\n", num_rolls);
 	printf("End of Program\n");
@@ -66,3 +83,11 @@ int main(void) {
 	return 0;
 }
 
+
+
+static inline uint8_t left(uint8_t current_player, uint8_t, num_players) {
+	return ((current_player + num_players -1) % num_players);
+}
+static inline uint8_t right(uint8_t current_player, uint8_t, num_players) {
+	return ((current_player + 1) % num_players);
+}
