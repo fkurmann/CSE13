@@ -9,7 +9,7 @@ int main(void) {
 	//typedef enum faciem { PASS, LEFT, RIGHT, CENTER } faces;
 	//faces die[] = {LEFT, RIGHT, CENTER, PASS, PASS, PASS};
 	
-	uint32_t seed, num_players, center_value = 0;
+	uint32_t seed, num_players, num_rolls, center_value = 0;
 
 	//Scanner to enter random seed
 	printf("Random seed: ");
@@ -29,40 +29,39 @@ int main(void) {
 	//int roll = random();
 	printf("%u\n", num_players);
 	
-	//create an array corresponding to length of num_players, give them all 3$
-	int32_t current_player = 0;
+	
+	//****************************NO CHANGES ABOVE THIS LINE********************
 
-	while (num_players > 1) {
-		int num_rolls = 0;
+	//declare and initialize player balance array
+	int player_balance [num_players];
+	for (uint32_t i = 0; i < num_players; i++) {
+		player_balance[i] = 3;
+	}
 
-		if () {
-			run_rolls > 0;
+	uint32_t current_player = 0;
+	while (current_player < num_players) {      //Will eventually become while(num_players > 1)
+		num_rolls = 0;
+
+		if (player_balance[current_player] > 0) {
 		
-			if () {
-				run_rolls = 1;
+			if (player_balance[current_player] == 1) {
+				num_rolls = 1;
 			}
-			if () {
-				run_rolls = 2;
+			if (player_balance[current_player] == 2) {
+				num_rolls = 2;
 			}
-			if () {
-				rum_rolls = 3;
+			else {
+				num_rolls = 3;
 			}
 		}
 
-
-
-
-
-
-
-
-
-
-
-
+	current_player++;
 	}
-	printf("End of Program\n");
 	
+	printf("Number of last player: %u\n", current_player);
+	printf("Rolls for last player: %u\n", num_rolls);
+	printf("End of Program\n");
+	center_value++; //to shut up the pedantic error for now	
 
 	return 0;
 }
