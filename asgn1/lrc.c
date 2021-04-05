@@ -45,63 +45,67 @@ int main(void) {
 		player_balance[i] = 3;
 	}
 
-	while (num_players > 1) {      //Will eventually become while(num_players > 1)
+	while (num_players > 1) {
 		num_rolls = 0;
+		player_right = right(current_player, original_num_players);
+		player_left = left(current_player, original_num_players);
 
 		if (player_balance[current_player] > 0) {
 		
 			if (player_balance[current_player] == 1) {
 				num_rolls = 1;
 			}
-			if (player_balance[current_player] == 2) {
+			else if(player_balance[current_player] == 2) {
 				num_rolls = 2;
 			}
 			else {
 				num_rolls = 3;
 			}
+			printf("%s rolls... ", philosophers[current_player]);
+
 		}
 
 		//Roll the dice and conduct the resulting transfers depending on how many rolls a player gets
-		for (uint32_t i = 0; i < num_rolls; i++) {
-			
+		for (uint32_t i = 0; i < num_rolls; i++) {	
 			//check that current player balance does not fall below zero during turn
 			if (player_balance[current_player] == 0) {
 				num_players--;
 				break;
 			}
-
 			roll = random() % 6;
-
 			if (roll == 0) {
 				player_balance[current_player]--;
-				player_left = left(current_player, num_players);
 				if (player_balance[player_left] == 0) { // Player resurrection means add to num_players
 					num_players++;
 				}
 				player_balance[player_left]++;
+				printf("gives $1 to %s ", philosophers[player_left]);
 			}
-			if (roll == 1) {
+			else if (roll == 1) {
 				player_balance[current_player]--;
-				player_right = right(current_player, num_players);
 				if (player_balance[player_right] == 0) { // Player resurrection means add to num_players
 					num_players++;
 				}
 				player_balance[player_right]++;
+				printf("gives $1 to %s ", philosophers[player_right]);
 			}
-			if (roll == 2) {
+			else if (roll == 2) {
 				player_balance[current_player]--;
 				center_value++;
+				printf("puts $1 in the pot ");
 			}
-
+			else {
+				printf("gets a pass ");
+			}
 		}
-		// check that current player balance didn't hit zero during turn
-		if (player_balance[current_player] == 0) {
-				num_players--;
+		if (num_rolls != 0) {
+			printf("\n");
+			// check that current player balance didn't hit zero during turn
+			if (player_balance[current_player] == 0) {
+					num_players--;
+			}
 		}
-
-
 		current_player = player_right;
-		printf("Number of players remaining: %u\n", num_players);
 	}
 	// search for winner, the remaining player
 	uint32_t index = 0;
@@ -113,10 +117,7 @@ int main(void) {
 		index++;
 	}
 
-	printf("Number of last player: %u\n", winner);
-	printf("Name of winner: %s \n", philosophers[winner]);
-	printf("Money left for the last player: %u\n", player_balance[winner]);
-	printf("End of Program\n");
+	printf("%s wins the $%u pot with $%u left in the bank!\n", philosophers[winner], center_value, player_balance[winner]);
 	return 0;
 }
 
