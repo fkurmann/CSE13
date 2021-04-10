@@ -26,17 +26,33 @@ int main(void) {
 	
     // Scanner to enter random seed
     printf("Random seed: ");
-    if (scanf("%u", &seed) < 1) { // check constraints to this if statement*********************************************************
-        fprintf(stderr, "Invalid random seed.\n");
-        return 1;
-    } 
+    if (scanf("%u", &seed) == 1) {
+	   
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    if (seed < 0) {   
+                fprintf(stderr, "Invalid random seed.\n");
+                return 1;
+	   }
+    } else {
+        fprintf(stderr, "Invalid num inputs.\n");
+	return 1;
+    }
     srandom(seed);
 
     // Scanner to enter number of players
     printf("How many players? ");
     if (scanf("%u", &num_players) < 1 || num_players > 14) {
         fprintf(stderr, "Invalid number of players\n");
-            return 1;
+        return 1;
     }
 		
     // Declare and initialize player balance array to equal the original number of players	
