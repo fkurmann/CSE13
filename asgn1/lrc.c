@@ -20,41 +20,36 @@ static inline uint32_t right(uint32_t current_player, uint32_t num_players) {
 }
 
 int main(void) {
-	
+    int32_t iseed = 0, inum_players = 0;	
     uint32_t seed, num_rolls, center_value = 0, num_players, original_num_players, current_player = 0;
     uint32_t winner = 0, player_left, player_right, roll;
 	
     // Scanner to enter random seed
     printf("Random seed: ");
-    if (scanf("%u", &seed) == 1) {
-	   
-	    
-	    
-	    
-	    
-	    
-	    
-	    
-	    
-	    
-	    
-	    if (seed < 0) {   
+    if (scanf("%d", &iseed) == 1) {
+	    if (iseed < 0) {   
                 fprintf(stderr, "Invalid random seed.\n");
                 return 1;
-	   }
+	   } 
     } else {
         fprintf(stderr, "Invalid num inputs.\n");
 	return 1;
     }
+    seed = iseed;
     srandom(seed);
 
     // Scanner to enter number of players
     printf("How many players? ");
-    if (scanf("%u", &num_players) < 1 || num_players > 14) {
-        fprintf(stderr, "Invalid number of players\n");
+    if (scanf("%d", &inum_players) == 1) {
+	   if (inum_players < 1 || inum_players > 14) {
+               fprintf(stderr, "Invalid number of players\n");
+               return 1;
+	   }
+    } else {
+        fprintf(stderr, "Invalid num inputs.\n");
         return 1;
     }
-		
+    num_players = inum_players;
     // Declare and initialize player balance array to equal the original number of players	
     int player_balance [num_players];
     for (uint32_t i = 0; i < num_players; i++) {
