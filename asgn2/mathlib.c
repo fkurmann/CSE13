@@ -6,7 +6,7 @@
 #include <math.h>
 #include <inttypes.h>
 
-#define EPSILON 0.001 //Lower precicion for now, MUST updata later maybe try #define EPSILON 1E-10
+#define EPSILON 0.0000000000001 //Lower precicion for now, MUST updata later maybe try #define EPSILON 1E-10
 
 // Helper Functions:
 
@@ -42,17 +42,16 @@ double Exp(double x) {
 }
 
 // Tester function main, temporary
-
+/*
 int main(void) {
-    printf ("arcsin 0.5 = %lf \n", arcSin(0.5));
-    printf ("arccos 0.5 = %lf \n", arcCos(0.5));
-    printf ("arctan 0.5 = %lf \n", arcTan(0.5));
-    printf ("log 2.0 = %lf \n", Log(2.0));
-    printf ("e^0.5 = %lf \n", Exp(0.5));
+    printf ("arcsin 0.99 = % .10lf \n", arcSin(0.99));
+    printf ("arccos -0.99 = % .10lf \n", arcCos(-0.99));
+    printf ("arctan 8.5 = % .10lf \n", arcTan(8.5));
+    printf ("log 10.0 = % .10lf \n", Log(10.0));
 
     return 0;
 }
-
+*/
 
 // Library Functions:
 

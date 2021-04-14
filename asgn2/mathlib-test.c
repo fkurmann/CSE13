@@ -7,8 +7,8 @@
 #include <inttypes.h>
 #include <unistd.h>
 
-#define OPTIONS "pi:"
-
+//#define OPTIONS "pi:"
+/*
 int main(int argc, char **argv) {
     int opt = 0;
     while ((opt = getopt(argc, argc, OPTIONS)) != -1)  {
@@ -22,4 +22,29 @@ int main(int argc, char **argv) {
         }
     }
     return 0
+}
+*/
+
+
+int main(void) { 
+
+    // Sin comparison:
+    printf("  x            arcSin           Library        Difference\n");
+    printf("  -            ------           -------        ----------\n");
+    for (double i = -1.0; i <= 1.0; i += 0.1) {
+	double my_fxn = arcSin(i), lib_fxn = asin(i);
+	
+        printf(" %7.4lf % 16.8lf % 16.8lf % 16.10lf\n", i, my_fxn, lib_fxn, (my_fxn - lib_fxn));
+    }
+    // Cos comparison:
+    printf("\n");
+    printf("  x            arcCos           Library       Difference\n");
+    printf("  -            ------           -------       ----------\n");
+    for (double i = -1.0; i <= 1.0; i += 0.1) {
+	double my_fxn = arcCos(i), lib_fxn = acos(i);
+	
+        printf(" %7.4lf % 16.8lf % 16.8lf % 16.10lf\n", i, my_fxn, lib_fxn, (my_fxn - lib_fxn));
+    }
+    
+    return 0;
 }

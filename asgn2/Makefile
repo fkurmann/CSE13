@@ -1,16 +1,16 @@
 CC = clang
 CFLAGS = -Wall -Wextra -Werror -Wpedantic
 
-all: lrc
+all: mathlib-test
 
-lrc: lrc.o
-	$(CC) -o lrc lrc.o
+mathlib-test: mathlib-test.o
+	$(CC) -o mathlib-test mathlib-test.o mathlib.o -lm
 
-lrc.o: lrc.c
-	$(CC) $(CFLAGS) -c lrc.c
+mathlib-test.o: mathlib-test.c
+	$(CC) $(CFLAGS) -c mathlib-test.c
 
 clean:
-	rm -f lrc lrc.o
+	rm -f mathlib-test mathlib-test.o
 
 scan-build: clean
 	scan-build make
