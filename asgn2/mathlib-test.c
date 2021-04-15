@@ -45,6 +45,26 @@ int main(void) {
 	
         printf(" %7.4lf % 16.8lf % 16.8lf % 16.10lf\n", i, my_fxn, lib_fxn, (my_fxn - lib_fxn));
     }
+
+    // Tan comparison:
+    printf("\n");
+    printf("  x            arcTan           Library       Difference\n");
+    printf("  -            ------           -------       ----------\n");
+    for (double i = 1.0; i <= 10.0; i += 0.1) {
+	double my_fxn = arcTan(i), lib_fxn = atan(i);
+	
+        printf(" %7.4lf % 16.8lf % 16.8lf % 16.10lf\n", i, my_fxn, lib_fxn, (my_fxn - lib_fxn));
+    }
+  
+    // Log comparison:
+    printf("\n");
+    printf("  x            Log              Library       Difference\n");
+    printf("  -            ------           -------       ----------\n");
+    for (double i = 1.0; i <= 10.0; i += 0.1) {
+	double my_fxn = Log(i), lib_fxn = log(i);
+	
+        printf(" %7.4lf % 16.8lf % 16.8lf % 16.10lf\n", i, my_fxn, lib_fxn, (my_fxn - lib_fxn));
+    }
     
     return 0;
 }

@@ -59,7 +59,7 @@ int main(void) {
 double arcSin(double x) {
     double step_size = x, value = x;
 
-    for (int k = 1; step_size > EPSILON; k++) {
+    for (int k = 1; Abs(step_size) > EPSILON; k++) {
         step_size = step_size *(((2 * k - 1) * (2 * k - 1) * x * x)/((2 * k) * (2 * k + 1)));
 	value = value + step_size;
     }
@@ -70,7 +70,7 @@ double arcSin(double x) {
 double arcCos(double x) {
     double step_size = x, value =((M_PI)/2) - x;
 
-    for (int k = 1; step_size > EPSILON; k++) {
+    for (int k = 1; Abs(step_size) > EPSILON; k++) {
         step_size = step_size *(((2 * k - 1) * (2 * k - 1) * x * x)/((2 * k) * (2 * k + 1)));
 	value = value - step_size;
     }
