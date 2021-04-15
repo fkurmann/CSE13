@@ -25,12 +25,6 @@ double Sqrt(double x) {
     return y;
 }
 
-// // Pow is inspired from the provided function in Lecture 9 MAY OR MAY NOT NEED
-// double Pow(double x, double y) {
-//     return Exp(y * Log(x));
-// }
-
-
 // Exp is inspired from the provided function on the CSE13S Piazza
 double Exp(double x) {
     double term = 1, sum = 1;
@@ -41,48 +35,43 @@ double Exp(double x) {
     return sum;
 }
 
-// Tester function main, temporary
-/*
-int main(void) {
-    printf ("arcsin 0.99 = % .10lf \n", arcSin(0.99));
-    printf ("arccos -0.99 = % .10lf \n", arcCos(-0.99));
-    printf ("arctan 8.5 = % .10lf \n", arcTan(8.5));
-    printf ("log 10.0 = % .10lf \n", Log(10.0));
-
-    return 0;
-}
-*/
 
 // Library Functions:
 
 // arcSin function:
 double arcSin(double x) {
-    double step_size = x, value = x;
+    if (Abs(x) > 0.8) { // To prevent larger error when x approaches 1, use trig property provided in Piazza
+        double value = ((M_PI)/2), plugin_value = (Sqrt((1 - x * x)));
+        
+	value -= arcSin(plugin_value); // Recursion to the rescue!
 
-    for (int k = 1; Abs(step_size) > EPSILON; k++) {
-        step_size = step_size *(((2 * k - 1) * (2 * k - 1) * x * x)/((2 * k) * (2 * k + 1)));
-	value = value + step_size;
+	if (Abs(x) != x) { // Since sign of x is removed in plugin_value translation, it is added back into consideration here
+	    value *= (-1);
+        }
+        
+	return value;
     }
-    return value;
+
+    else {
+        double step_size = x, value = x;
+        for (int k = 1; Abs(step_size) > EPSILON; k++) {
+            step_size = step_size *(((2 * k - 1) * (2 * k - 1) * x * x)/((2 * k) * (2 * k + 1)));
+	    value = value + step_size;
+        }
+        return value;
+    }
 }
 
 // arcCos function
 double arcCos(double x) {
-    double step_size = x, value =((M_PI)/2) - x;
-
-    for (int k = 1; Abs(step_size) > EPSILON; k++) {
-        step_size = step_size *(((2 * k - 1) * (2 * k - 1) * x * x)/((2 * k) * (2 * k + 1)));
-	value = value - step_size;
-    }
-    return value;
+    double value = ((M_PI)/2);
+    return (value - arcSin(x));
 }
 
 // arcTan function
 double arcTan(double x) {
-    double value, plugin_value = (x/Sqrt((x * x + 1)));
-    value = arcSin(plugin_value);
-    
-    return value;
+    double plugin_value = (x/Sqrt((x * x + 1)));
+    return (arcSin(plugin_value));
 }
 
 // Log function
