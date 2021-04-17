@@ -40,7 +40,7 @@ double Exp(double x) {
 // arcSin function, using Taylor Series to solve for inverse sin
 double arcSin(double x) {
     // To prevent larger error when x approaches 1, use trig property provided in Piazza
-    if (Abs(x) > 0.8) { 
+    if (Abs(x) > 0.71) { 
         double value = ((M_PI)/2), plugin_value = (Sqrt((1 - x * x)));
         
 	value -= arcSin(plugin_value); // Recusivly call arcSin of a value further from |1|
