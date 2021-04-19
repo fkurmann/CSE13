@@ -1,4 +1,5 @@
 #include "bubble.h"
+#include "gaps.h"
 
 #include <assert.h>
 #include <inttypes.h>
@@ -7,7 +8,9 @@
 #include <stdlib.h>
 
 
-void bubble_sort(uint32_t *A, uint32_t n);
+void quick_sort_stack(uint32_t *A, uint32_t n);
+void quick_sort_queue(uint32_t *A, uint32_t n);
+int64_t partition();
 
 // Temporary main method
 int main() {
@@ -18,7 +21,7 @@ int main() {
         printf("%u \n", tester[i]);
     }
 
-    bubble_sort(tester, 9);
+    quick_sort_stack(tester, 9);
     
     // Print hopefully sorted array
     for (int i = 0; i < 9; i++) {
@@ -26,21 +29,23 @@ int main() {
     }
     return 0;
 }
+int64_t partition(uint32_t *A, int lo, int hi) {
+    uint32_t pivot = A[lo + ((hi - lo) / 2)];  // CHECK THE DIVISION IN THIS LINE
+    int i = lo - 1, j = hi +i;
 
-void bubble_sort(uint32_t *A, uint32_t n) {
-    uint32_t size = n;
-    int swapped = 1;
-    while (swapped == 1)  { // Check if you can make it just be while swapped
-        swapped = 0;
-	for (uint32_t i = 1; i < size; i++) {
-	    if (A[i] < A[i-1]) {
-	        uint32_t holder = A[i]; // Check if this holder is doing it's job and if it's needed
-		A[i] = A[i-1];
-		A[i-1] = holder;
-		swapped = 1;
-	    }
-	}
-    size--;
-    }
+    
 }
+
+void quick_sort_stack(uint32_t *A, uint32_t n) {
+    
+}
+
+void quick_sort_stack(uint32_t *A, uint32_t n) {
+    
+}
+
+
+
+
+
 

@@ -28,20 +28,27 @@ int main() {
     return 0;
 }
 
+// Shell sort method, given pointer to unsorted array and the array's length, sorts using the gap sequence in gaps.h
 void shell_sort(uint32_t *A, uint32_t n) {
-    uint32_t size = n;
-    int swapped = 1;
-    while (swapped == 1)  { // Check if you can make it just be while swapped
-        swapped = 0;
-	for (uint32_t i = 1; i < size; i++) {
-	    if (A[i] < A[i-1]) {
-	        uint32_t holder = A[i]; // Check if this holder is doing it's job and if it's needed
-		A[i] = A[i-1];
-		A[i-1] = holder;
-		swapped = 1;
-	    }
+    for (int i = 0; i < GAPS; i++) {
+	uint32_t gap = gaps[i];
+
+        for (uint32_t j = gap; j < n; j++) {
+	    uint32_t index = j, holder = A[j];
+
+	    while (index >= gap && holder < A[index - gap]) {
+	        // Swap the components seperated by the current gap
+		A[index] = A[index-gap];
+		A[index-gap] = holder;
+
+		index -= gap;
+            }
+	    A[index] = holder;	    
 	}
-    size--;
     }
 }
+
+
+
+
 
