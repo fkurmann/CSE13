@@ -1,0 +1,73 @@
+#include "stack.h"
+
+#include <assert.h>
+#include <inttypes.h>
+#include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+struct Stack {
+    uint32_t top;
+    uint32_t capacity;
+    int64_t *items;
+};
+
+Stack *stack_create(uint32_t capacity) {
+    Stack *s = (Stack *) malloc(sizeof(Stack));
+    if (s) {
+        s->top = 0;
+	s->capacity = capacity;
+	s->items = (int64_t *) calloc (capacity, sizeof(int64_t));
+	if (!s->items) {
+	    free(s);
+	    s = NULL;
+	}
+    }
+    return s;
+}
+
+void stack_delete(Stack **s) {
+    if (*s && (*s)->items) {
+        free((*s)->items);
+	free(*s);
+	*s = NULL;
+    }
+    return;
+}
+
+bool stack_empty(Stack *s) {
+    return s->top == 0;
+}
+bool stack_full(Stack *s) {
+    return s->top == s->capacity;
+}
+//uint32_t stack_size(Stack *s) {
+
+//}
+bool stack_push(Stack *s, int64_t x) {
+    if (stack_full(s) == true) {
+        return false;
+    }
+    s->items[s->top] = x;
+    s->top++;
+    return true;
+}
+bool stack_pop(Stack *s, int64_t *x) {
+    // Check if it is possible to pop from the stack
+    if (stack_empty(s) == true) {
+        return false;
+    }
+    s->top--;
+    *x = s->items[s->top];
+    return true;
+}
+//void Stack_print(Stack *s) { 
+
+//}
+
+int main(void) {
+    Stack *s = stack_create(10);
+    stack_delete(&s);
+    assert(s == NULL);
+}
