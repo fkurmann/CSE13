@@ -6,6 +6,7 @@
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 
 
 void quick_sort_stack(uint32_t *A, uint32_t n);
@@ -56,7 +57,7 @@ void quick_sort_stack(uint32_t *A, uint32_t n) {
     // Stack initialtion, call the stack qs_stack
     stack_push(qs_stack, lo);
     stack_push(qs_stack, hi);
-    while (stack_empty(qs_stack) == 0) {
+    while (stack_empty(qs_stack) == false) {
        //Stack_pop for hi and lo
        p = partition(A, lo, hi);
        if (lo < p) {
@@ -70,6 +71,22 @@ void quick_sort_stack(uint32_t *A, uint32_t n) {
 }
 
 void quick_sort_queue(uint32_t *A, uint32_t n) {
+    int64_t lo = 0, hi = n - 1, p;
+    // queue initialtion, call the stack qs_stack
+    queue_enqueue(qs_queue, lo);
+    queue_enqueue(qs_queue, hi);
+    while (queue_empty(qs_queue) == false) {
+       // Dequeue from the tail*************************************************************************
+       p = partition(A, lo, hi);
+       if (lo < p) {
+           queue_enqueue(qs_queue, lo);
+           queue_queueue(qs_queue, p);
+       } 
+       if (hi > p + 1) {
+           queue_enqueue(qs_queue, p + 1);
+           queue_enqueue(qs_queue, hi);
+       }
+
     
 }
 
