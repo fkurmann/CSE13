@@ -1,5 +1,6 @@
-#include "bubble.h"
-#include "gaps.h"
+#include "quick.h"
+#include "stack.h"
+#include "queue.h"
 
 #include <assert.h>
 #include <inttypes.h>
@@ -22,7 +23,7 @@ int main() {
         printf("%u \n", tester[i]);
     }
 
-    quick_sort_stack(tester, 9);
+    quick_sort_queue(tester, 9);
     
     // Print hopefully sorted array
     for (int i = 0; i < 9; i++) {
@@ -32,7 +33,7 @@ int main() {
 }
 int64_t partition(uint32_t *A, int64_t lo, int64_t hi) {
     uint32_t pivot = A[lo + ((hi - lo) / 2)], holder;  // CHECK THE DIVISION IN THIS LINE
-    int64_t x_lo = lo - 1, x_hi = hi +i;
+    int64_t x_lo = lo - 1, x_hi = hi + 1;
     while (x_lo < x_hi) {
         x_lo++;
         while (A[x_lo] < pivot) {
@@ -48,17 +49,18 @@ int64_t partition(uint32_t *A, int64_t lo, int64_t hi) {
 	    A[x_hi] = holder;
 	}
     }
-    return x_hi
+    return x_hi;
     
 }
 
 void quick_sort_stack(uint32_t *A, uint32_t n) {
     int64_t lo = 0, hi = n - 1, p;
-    // Stack initialtion, call the stack qs_stack
+    Stack *qs_stack = stack_create(100);
     stack_push(qs_stack, lo);
     stack_push(qs_stack, hi);
     while (stack_empty(qs_stack) == false) {
-       //Stack_pop for hi and lo
+       stack_pop(qs_stack, &hi);
+       stack_pop(qs_stack, &lo);
        p = partition(A, lo, hi);
        if (lo < p) {
            stack_push(qs_stack, lo);
@@ -68,26 +70,27 @@ void quick_sort_stack(uint32_t *A, uint32_t n) {
            stack_push(qs_stack, p + 1);
            stack_push(qs_stack, hi);
        }
+    }
 }
 
 void quick_sort_queue(uint32_t *A, uint32_t n) {
     int64_t lo = 0, hi = n - 1, p;
-    // queue initialtion, call the stack qs_stack
-    queue_enqueue(qs_queue, lo);
-    queue_enqueue(qs_queue, hi);
+    Queue *qs_queue = queue_create(100);
+    enqueue(qs_queue, lo);
+    enqueue(qs_queue, hi);
     while (queue_empty(qs_queue) == false) {
-       // Dequeue from the tail*************************************************************************
+       dequeue(qs_queue, &lo);
+       dequeue(qs_queue, &hi);
        p = partition(A, lo, hi);
        if (lo < p) {
-           queue_enqueue(qs_queue, lo);
-           queue_queueue(qs_queue, p);
+           enqueue(qs_queue, lo);
+           enqueue(qs_queue, p);
        } 
        if (hi > p + 1) {
-           queue_enqueue(qs_queue, p + 1);
-           queue_enqueue(qs_queue, hi);
+           enqueue(qs_queue, p + 1);
+           enqueue(qs_queue, hi);
        }
-
-    
+    }
 }
 
 
