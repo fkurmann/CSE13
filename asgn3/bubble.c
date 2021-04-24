@@ -1,5 +1,4 @@
 #include "bubble.h"
-#include "gaps.h"
 
 #include <assert.h>
 #include <inttypes.h>
@@ -7,74 +6,28 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+//CITATION: The bubblesort function is inspried by pseudocode provided by Professor Long.
 
-void quick_sort_stack(uint32_t *A, uint32_t n);
-void quick_sort_queue(uint32_t *A, uint32_t n);
-int64_t partition();
+extern int64_t moves, comparisons;
 
-// Temporary main method
-int main() {
-    uint32_t tester[] = {4, 7, 2, 6, 92, 14, 9, 83, 1};
-    
-    // Print original array
-    for (int i = 0; i < 9; i++) {
-        printf("%u \n", tester[i]);
+// Bubble sort method given pointer to an array and its length sorts the array via bubble sort
+void bubble_sort(uint32_t *A, uint32_t n) {
+    int swapped = 1; // Swapped boolean
+    uint32_t holder; // Holder for swapping
+    while (swapped == 1) {
+        swapped = 0;
+        for (uint32_t i = 1; i < n; i++) {
+            comparisons++;
+            if (A[i] < A[i - 1]) {
+                // Swap the items in array indexes i and i-1
+                holder = A[i];
+                A[i] = A[i - 1];
+                A[i - 1] = holder;
+                swapped = 1;
+
+                moves += 3;
+            }
+        }
+        n--;
     }
-
-    quick_sort_stack(tester, 9);
-    
-    // Print hopefully sorted array
-    for (int i = 0; i < 9; i++) {
-        printf("%u \n", tester[i]);
-    }
-    return 0;
 }
-int64_t partition(uint32_t *A, int64_t lo, int64_t hi) {
-    uint32_t pivot = A[lo + ((hi - lo) / 2)], holder;  // CHECK THE DIVISION IN THIS LINE
-    int64_t x_lo = lo - 1, x_hi = hi +i;
-    while (x_lo < x_hi) {
-        x_lo++;
-        while (A[x_lo] < pivot) {
-	    x_lo++;
-	}
-	x_hi--;
-	while (A[x_hi] > pivot) {
-	    x_hi--;
-	}
-	if (x_lo < x_hi) {
-	    holder = A[x_lo];
-	    A[x_lo] = A[x_hi];
-	    A[x_hi] = holder;
-	}
-    }
-    return x_hi
-    
-}
-
-void quick_sort_stack(uint32_t *A, uint32_t n) {
-    int64_t lo = 0, hi = n - 1, p;
-    // Stack initialtion, call the stack qs_stack
-    stack_push(qs_stack, lo);
-    stack_push(qs_stack, hi);
-    while (stack_empty(qs_stack) == 0) {
-       //Stack_pop for hi and lo
-       p = partition(A, lo, hi);
-       if (lo < p) {
-           stack_push(qs_stack, lo);
-           stack_push(qs_stack, p);
-       } 
-       if (hi > p + 1) {
-           stack_push(qs_stack, p + 1);
-           stack_push(qs_stack, hi);
-       }
-}
-
-void quick_sort_queue(uint32_t *A, uint32_t n) {
-    
-}
-
-
-
-
-
-
