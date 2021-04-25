@@ -42,7 +42,7 @@ int bubble_output(uint32_t seed, uint32_t elements, uint32_t print_out) {
     comparisons = 0;
 
     // Create an array from the seed:
-    uint32_t array[elements];
+    uint32_t *array = (uint32_t *) malloc(sizeof(uint32_t) * elements);
     srandom(seed);
     for (uint32_t i = 0; i < elements; i++) {
         array[i] = random();
@@ -56,6 +56,7 @@ int bubble_output(uint32_t seed, uint32_t elements, uint32_t print_out) {
     if (print_out != 0) {
         print_output(array, print_out);
     }
+    free(array);
 
     return 0;
 }
@@ -66,7 +67,7 @@ int shell_output(uint32_t seed, uint32_t elements, uint32_t print_out) {
     comparisons = 0;
 
     // Create an array from the seed:
-    uint32_t array[elements];
+    uint32_t *array = (uint32_t *) malloc(sizeof(uint32_t) * elements);
     srandom(seed);
     for (uint32_t i = 0; i < elements; i++) {
         array[i] = random();
@@ -80,6 +81,7 @@ int shell_output(uint32_t seed, uint32_t elements, uint32_t print_out) {
     if (print_out != 0) {
         print_output(array, print_out);
     }
+    free(array);
     return 0;
 }
 
@@ -89,7 +91,7 @@ int qs_output(uint32_t seed, uint32_t elements, uint32_t print_out) {
     comparisons = 0;
 
     // Create an array from the seed:
-    uint32_t array[elements];
+    uint32_t *array = (uint32_t *) malloc(sizeof(uint32_t) * elements);
     srandom(seed);
     for (uint32_t i = 0; i < elements; i++) {
         array[i] = random();
@@ -104,6 +106,7 @@ int qs_output(uint32_t seed, uint32_t elements, uint32_t print_out) {
     if (print_out != 0) {
         print_output(array, print_out);
     }
+    free(array);
     return 0;
 }
 
@@ -113,7 +116,7 @@ int qq_output(uint32_t seed, uint32_t elements, uint32_t print_out) {
     comparisons = 0;
 
     // Create an array from the seed:
-    uint32_t array[elements];
+    uint32_t *array = (uint32_t *) malloc(sizeof(uint32_t) * elements);
     srandom(seed);
     for (uint32_t i = 0; i < elements; i++) {
         array[i] = random();
@@ -128,6 +131,7 @@ int qq_output(uint32_t seed, uint32_t elements, uint32_t print_out) {
     if (print_out != 0) {
         print_output(array, print_out);
     }
+    free(array);
     return 0;
 }
 
