@@ -88,10 +88,11 @@ bool stack_peek(Stack *s, uint32_t *x) {
 
 // Copy the items and the value of the top to the destination stack
 void stack_copy(Stack *dst, Stack *src) {
-    for (int i = 0; i < stack_size(src); i++) {
+    for (uint32_t i = 0; i < stack_size(src); i++) {
         dst->items[i] = src->items[i];
     }
     dst->top = stack_size(src);	
+    printf("%u \n", dst->top);      
     return;
 }
 
@@ -105,3 +106,37 @@ void stack_print(Stack *s, FILE *outfile, char *cities[]) {
     fprintf(outfile, "\n");
     return; //////////////////////////////////////////CHECK IF THIS LINE IS ESSENTIAL/HARMFUL
 }
+
+
+// Temporary main function:
+/*
+int main(void) {
+    uint32_t return_integer = 54;
+    Stack *test = stack_create(VERTICES);
+
+    stack_push(test, 49);
+    stack_push(test, 29);
+    stack_push(test, 32);
+    printf("%u \n", stack_size(test));
+    
+    stack_peek(test, &return_integer);
+    printf("%u \n", return_integer);       //Should print 32
+
+
+    Stack *duplicate = stack_create(VERTICES);
+    stack_copy(duplicate, test);
+    printf("%u \n", stack_size(duplicate));
+    
+    stack_pop(duplicate, &return_integer);
+    printf("%u \n", return_integer);       //Should print 32
+    stack_peek(duplicate, &return_integer);
+    printf("%u \n", return_integer);       //Should print 29
+
+
+    stack_delete(&test);
+    assert (test == NULL);
+    stack_delete(&duplicate);
+    assert (duplicate == NULL);
+
+    return 0;
+}*/
