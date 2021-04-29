@@ -51,7 +51,13 @@ bool path_push_vertex(Path *p, uint32_t v, Graph *G) {
         return false;
     }
     uint32_t old_top;
-    stack_peek(p->vertices, &old_top); // old_top holds the prior vertex's value
+    // Check if you are adding to a started stack or you have to start from the origin (0, 0)
+    if (stack_empty(p->vertices) == true) {
+	old_top = 0;
+    }
+    else {
+        stack_peek(p->vertices, &old_top); // old_top holds the prior vertex's value
+    }
     stack_push(p->vertices, v);
     p->length += graph_edge_weight(G, old_top, v); // Find the length from old_top to v in the map graph
     return true;
@@ -94,21 +100,25 @@ void path_print(Path *p, FILE *outfile, char *cities[]) {
 int main(void) {
 	Graph *test_graph = graph_create(5, true);
 	graph_add_edge(test_graph, 0, 3, 6);
+	graph_add_edge(test_graph, 3, 2, 2);
+	graph_add_edge(test_graph, 2, 4, 7);
 	graph_print(test_graph);
 
 	uint32_t return_integer = 0;
-	printf("%u \n", return_integer);
 	Path *test_path = path_create();
 	Path *duplicate_path = path_create();
 
-	printf("%u \n", path_length(test_path));
-	printf("%u \n", path_vertices(test_path));
         path_push_vertex(test_path, 3, test_graph);
-        path_push_vertex(test_path, 8, test_graph);
-	printf("%u \n", path_length(test_path));
-	printf("%u \n", path_vertices(test_path));
+        path_push_vertex(test_path, 2, test_graph);
+        path_push_vertex(test_path, 4, test_graph);
+	printf("%u \n", path_length(test_path)); //Should print 15
+	printf("%u \n", path_vertices(test_path)); //Should print 3
 
-
+	path_copy(duplicate_path, test_path);
+	path_pop_vertex(duplicate_path, &return_integer, test_graph);
+	printf("%u \n", return_integer); //Should print 4
+	printf("%u \n", path_length(duplicate_path)); //Should print 8
+        
 	path_delete(&test_path);
 	path_delete(&duplicate_path);
 	assert(test_path == NULL);

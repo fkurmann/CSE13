@@ -46,5 +46,5 @@ The program will show options to choose from which print some or all tests with 
 
 **-i** Follow with the name of the input file contianing cities (vertices) and roads (edges). If none is specified, command line is input.
 
-**-o** Follow with the name of the output file to print path to. If non is specified, command line is output.
+**-o** Follow with the name of the output file to print path to. If none is specified, command line is output.
 

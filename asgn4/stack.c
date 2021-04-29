@@ -92,7 +92,6 @@ void stack_copy(Stack *dst, Stack *src) {
         dst->items[i] = src->items[i];
     }
     dst->top = stack_size(src);	
-    printf("%u \n", dst->top);      
     return;
 }
 
