@@ -1,36 +1,28 @@
 CC = clang
-CFLAGS = -Wall -Werror -Wextra -Wpedantic
+CFLAGS = -Wall -Wextra -Wpedantic
 
-all: sorting
+all: tsp
 
-sorting: sorting.o set.o bubble.o shell.o quick.o stack.o queue.o
-	$(CC) -o sorting sorting.o set.o bubble.o shell.o quick.o stack.o queue.o -lm 
+tsp: tsp.o path.o graph.o stack.o
+	$(CC) -o tsp tsp.o path.o graph.o stack.o -lm 
 
-sorting.o: sorting.c
-	$(CC) $(CFLAGS) -c sorting.c
+tsp.o: tsp.c
+	$(CC) $(CFLAGS) -c tsp.c
 
-set.o: set.c
-	$(CC) $(CFLAGS) -c set.c
+path.o: path.c
+	$(CC) $(CFLAGS) -c path.c
 
-bubble.o: bubble.c
-	$(CC) $(CFLAGS) -c bubble.c
-
-shell.o: shell.c
-	$(CC) $(CFLAGS) -c shell.c
-
-quick.o: quick.c
-	$(CC) $(CFLAGS) -c quick.c
+graph.o: graph.c
+	$(CC) $(CFLAGS) -c graph.c
 
 stack.o: stack.c
 	$(CC) $(CFLAGS) -c stack.c
 
-queue.o: queue.c
-	$(CC) $(CFLAGS) -c queue.c
-
 clean:
-	rm -f sorting sorting.o set.o bubble.o shell.o quick.o stack.o queue.o
+	rm -f tsp tsp.o path.o graph.o stack.o
 
 format:
-	clang-format -i -style=file sorting.c set.c bubble.c shell.c quick.c stack.c queue.c
+	clang-format -i -style=file tsp.c path.c graph.c stack.c
+
 scan-build: clean
 	scan-build make

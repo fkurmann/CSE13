@@ -1,6 +1,7 @@
 #include "graph.h"
-#include "stack.h"
 #include "path.h"
+#include "stack.h"
+#include "vertices.h"
 
 #include <assert.h>
 #include <getopt.h>
@@ -10,185 +11,122 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-
+#include <string.h>
 
 // Command line argument options
-#define OPTIONS "r:n:p:abrsqQ"
+#define OPTIONS "i:o:hvu"
 
-// Global variables that are edited by the sorting functions then reported here
-int64_t moves, comparisons;
-uint32_t max_stack, max_queue;
+// Recursive depth first search algorithm takes in the curren and shortest paths, the graph, and a vertex to go deeper on.
+void dfs(Graph *G, uint32_t vertex, Path *current_path, Path *shortest_path) {
 
-// Print helper function called by the output functions above to print the formatted array values
-void print_output(uint32_t *A, uint32_t print_out) {
-    for (uint32_t i = 0; i < print_out; i += 5) {
-        for (uint32_t j = i; j < i + 5 && j < print_out; j++) {
-            printf("%13" PRIu32, A[j]);
-        }
-        printf("\n");
-    }
+
     return;
 }
 
-// Functions that run the sorting algorithms and output the results according to format. These all take inputs
-// seed and element number as well as how many elements to print.
-int bubble_output(uint32_t seed, uint32_t elements, uint32_t print_out) {
-    // Reset the global variables:
-    moves = 0;
-    comparisons = 0;
 
-    // Create an array from the seed:
-    uint32_t *array = (uint32_t *) malloc(sizeof(uint32_t) * elements);
-    srandom(seed);
-    for (uint32_t i = 0; i < elements; i++) {
-        array[i] = random();
-    }
+// Global variables that are edited by the sorting functions then reported here
+// uint32_t recursive_calles;
 
-    // Run the sorting algorithm and report results
-    bubble_sort(array, elements);
 
-    printf("Bubble Sort \n");
-    printf("%u elements, %ld moves, %ld compares \n", elements, moves, comparisons);
-    if (print_out != 0) {
-        print_output(array, print_out);
-    }
-    free(array);
-
-    return 0;
-}
-
-int shell_output(uint32_t seed, uint32_t elements, uint32_t print_out) {
-    // Reset the global variables:
-    moves = 0;
-    comparisons = 0;
-
-    // Create an array from the seed:
-    uint32_t *array = (uint32_t *) malloc(sizeof(uint32_t) * elements);
-    srandom(seed);
-    for (uint32_t i = 0; i < elements; i++) {
-        array[i] = random();
-    }
-
-    // Run the sorting algorithm and report results
-    shell_sort(array, elements);
-
-    printf("Shell Sort\n");
-    printf("%u elements, %ld moves, %ld compares \n", elements, moves, comparisons);
-    if (print_out != 0) {
-        print_output(array, print_out);
-    }
-    free(array);
-    return 0;
-}
-
-int qs_output(uint32_t seed, uint32_t elements, uint32_t print_out) {
-    // Reset the global variables:
-    moves = 0;
-    comparisons = 0;
-
-    // Create an array from the seed:
-    uint32_t *array = (uint32_t *) malloc(sizeof(uint32_t) * elements);
-    srandom(seed);
-    for (uint32_t i = 0; i < elements; i++) {
-        array[i] = random();
-    }
-
-    // Run the sorting algorithm and report results
-    quick_sort_stack(array, elements);
-
-    printf("Quick Sort (Stack)\n");
-    printf("%u elements, %ld moves, %ld compares \n", elements, moves, comparisons);
-    printf("Max stack size: %u \n", max_stack);
-    if (print_out != 0) {
-        print_output(array, print_out);
-    }
-    free(array);
-    return 0;
-}
-
-int qq_output(uint32_t seed, uint32_t elements, uint32_t print_out) {
-    // Reset the global variables:
-    moves = 0;
-    comparisons = 0;
-
-    // Create an array from the seed:
-    uint32_t *array = (uint32_t *) malloc(sizeof(uint32_t) * elements);
-    srandom(seed);
-    for (uint32_t i = 0; i < elements; i++) {
-        array[i] = random();
-    }
-
-    // Run the sorting algorithm and report results
-    quick_sort_queue(array, elements);
-
-    printf("Quick Sort (Queue)\n");
-    printf("%u elements, %ld moves, %ld compares \n", elements, moves, comparisons);
-    printf("Max queue size: %u \n", max_queue);
-    if (print_out != 0) {
-        print_output(array, print_out);
-    }
-    free(array);
-    return 0;
-}
 
 int main(int argc, char **argv) {
-    // Present user with options
-    if (argc == 1) {
-        printf("Program usage: \n"
-               "  -a            runs all sorts (bubble, shell, quick stack, quick queue)\n"
-               "  -b            runs bubblesort\n"
-               "  -s            runs shellsort\n"
-               "  -q            runs quicksort utilizing a stack\n"
-               "  -Q            runs quicksort utilizing a queue\n"
-               "  -r seed       sets the random seed to your input\n"
-               "  -n size       sets the array size to your input\n"
-               "  -p elements   sets the number of elements from the array to print out to your "
-               "input\n");
-    }
-    // Default Settings
-    uint32_t elements = 100, seed = 13371453, print_out = 100;
-
-    // Set Initiation
-    Set input_set = set_empty();
-
-    // Command line arguments
+    bool verbose_printing = false, undirected = false, outfile_given = false, infile_given = false;
+    //char infile [] = "Empty";
+    //char outfile [] = "Empty";
+    uint32_t vertices;
+    char cities [VERTICES][100];
+    uint32_t coordinates [1000];
+    
+    // Command line arguments get processed, booleans for verbose and undirected are set, in and outfiles are stored.
     int opt = 0;
     while ((opt = getopt(argc, argv, OPTIONS)) != -1) {
         switch (opt) {
-        case 'a':
-            input_set = set_insert(input_set, 81); // ASCII for Q
-            input_set = set_insert(input_set, 113); // ASCII for q
-            input_set = set_insert(input_set, 115); // ASCII for s
-            input_set = set_insert(input_set, 98); // ASCII for b
+        case 'h':
+           printf("Traveling Salesman Problem using Depth First Search \n"
+               "Program usage: \n"
+               "  -h            Show help menu\n"
+               "  -v            Enable verbose printing\n"
+               "  -u            Make the graph undirected\n"
+               "  -i infile     Specify an infile to read from\n"
+               "  -o outfile    Specify an outfile to write to\n");
             break;
-        case 'b': input_set = set_insert(input_set, opt); break;
-        case 's': input_set = set_insert(input_set, opt); break;
-        case 'q': input_set = set_insert(input_set, opt); break;
-        case 'Q': input_set = set_insert(input_set, opt); break;
-        // CITATION: Use of the atoi function for converting string to uint32_t is inspired by RichieHindle's comments
-        // towards the subject on Stack overflow.
-        case 'r': seed = atoi(optarg); break;
-        case 'n': elements = atoi(optarg); break;
-        case 'p': print_out = atoi(optarg); break;
+        case 'u': undirected = true; break;
+        case 'v': verbose_printing = true; break;
+        case 'o': 
+		  printf("%s \n", optarg);
+		  //char outfile[] = optarg; 
+		  break;
+        case 'i': 
+		  // Set the infile string to the argument given by the user
+		  infile_given = true;
+		  char* infile = strdup(optarg);
+		  char file_line[20];
+		  
+		  // Open the file specified by input, returning an error if no such file is found.
+		  // CITATION: This file opening, reading, and checking is inspired by code found on the website tutorials
+		  // point.com.
+		  FILE *input_file = fopen(infile, "r");
+		  if (input_file == NULL) {
+	              perror("Invalid file");
+		      return 1;
+		  }
+                  
+		  // Set the number of vertices, the first line of the input
+		  fgets(file_line, 100, input_file);
+		  vertices = atoi(file_line);
+		  if (vertices > VERTICES) {
+	              fprintf(stderr, "Error: Input file contains too many vertices \n");
+		      return 1;
+		  }
+                   
+		  // Set the names of the cities, the second block of the input
+		  for (uint32_t i = 0; i < vertices; i++) {
+		      fgets(file_line, 100, input_file);
+	              strcpy(cities[i], (file_line));
+		  }
+
+		  // Set the coordinates of the cities, the thrid block of the input
+		  for (uint32_t i = 0; i < (3 * vertices); i += 3) {
+		      fgets(file_line, 100, input_file);
+
+		      char *char_coordinate = strtok(file_line, " ");
+		      uint32_t index = 0;
+		      while (char_coordinate != NULL) {
+			  coordinates[i + index] = atoi(char_coordinate);
+			  char_coordinate = strtok(NULL, " ");
+                          index++;
+		      }
+		  }
+                  // Close the input file, free the dynamically allocated string infile and break without memory leaks.
+		  fclose(input_file);
+		  free(infile); 
+		  break;
+	}
+    }
+
+    /*
+    if (infile_given == true ||  outfile_given == true) {
+        
+	for (uint32_t i = 0; i < vertices; i++) {
+	    printf("%s", cities[i]);
         }
     }
-    // Catch the error if print exceeds elements
-    if (elements < print_out) {
-        print_out = elements;
+    */
+
+    // Read the input from a file or the command line and create ititial adt's
+    Path *shortest_path = path_create();
+    Path *current_path = path_create();
+    Graph *map = graph_create(vertices, undirected);
+    for (uint32_t i = 0; i < (3* vertices); i += 3) {
+        graph_add_edge(map, coordinates[i], coordinates[i+1], coordinates[i+2]);
     }
-    //Calls to sort functions based on set containing command line args.
-    if (set_member(input_set, 98) == true) {
-        bubble_output(seed, elements, print_out);
-    }
-    if (set_member(input_set, 115) == true) {
-        shell_output(seed, elements, print_out);
-    }
-    if (set_member(input_set, 113) == true) {
-        qs_output(seed, elements, print_out);
-    }
-    if (set_member(input_set, 81) == true) {
-        qq_output(seed, elements, print_out);
-    }
+    //graph_print(map);
+    printf("%u \n", graph_vertices(map));
+
+    // Delete the ADT's to prevent memory leaks.
+    path_delete(&shortest_path);
+    path_delete(&current_path);
+    graph_delete(&map);
 
     return 0;
 }
