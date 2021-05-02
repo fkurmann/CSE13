@@ -71,8 +71,13 @@ bool path_pop_vertex(Path *p, uint32_t *v, Graph *G) {
     uint32_t old_top, new_top;
     stack_peek(p->vertices, &old_top); // old_top holds the to be removed vertex's value
     stack_pop(p->vertices, v);
-    stack_peek(p->vertices, &new_top); // new_top holds the new top vertex value
-    p->length -= graph_edge_weight(G, new_top, old_top); 
+    if (stack_empty(p->vertices) == true) {
+        p->length = 0;
+    }
+    else {
+        stack_peek(p->vertices, &new_top); // new_top holds the new top vertex value
+        p->length -= graph_edge_weight(G, new_top, old_top); 
+    }
     return true;
 }
 
@@ -97,6 +102,8 @@ void path_print(Path *p, FILE *outfile, char *cities[]) {
     return; 
 }*/
 
+
+/*
 int main(void) {
 	Graph *test_graph = graph_create(5, true);
 	graph_add_edge(test_graph, 0, 3, 6);
@@ -126,3 +133,4 @@ int main(void) {
         graph_delete(&test_graph);
 	return 0;
 }
+*/

@@ -103,7 +103,7 @@ void stack_print(Stack *s, FILE *outfile, char *cities[]) {
 	}
     }
     fprintf(outfile, "\n");
-    return; //////////////////////////////////////////CHECK IF THIS LINE IS ESSENTIAL/HARMFUL
+    return;
 }
 
 
