@@ -1,4 +1,5 @@
 #include "graph.h"
+
 #include "vertices.h"
 
 #include <assert.h>
@@ -24,7 +25,7 @@ Graph *graph_create(uint32_t vertices, bool undirected) {
     Graph *G = (Graph *) malloc(sizeof(Graph));
     if (G) {
         G->vertices = vertices;
-	G->undirected = undirected;
+        G->undirected = undirected;
     }
     return G;
 }
@@ -85,8 +86,7 @@ void graph_mark_visited(Graph *G, uint32_t v) {
     if (v > G->vertices) {
         return;
     }
-     G->visited[v] = true;
-
+    G->visited[v] = true;
 }
 
 void graph_mark_unvisited(Graph *G, uint32_t v) {
@@ -94,49 +94,15 @@ void graph_mark_unvisited(Graph *G, uint32_t v) {
         return;
     }
     G->visited[v] = false;
-
 }
 
 void graph_print(Graph *G) {
     for (uint32_t i = 0; i < G->vertices; i++) {
-	for (uint32_t j = 0; j < G->vertices; j++) {
+        for (uint32_t j = 0; j < G->vertices; j++) {
             printf("%13" PRIu32, G->matrix[i][j]);
-	}
-	printf("\n");
-	printf("\n");
+        }
+        printf("\n");
+        printf("\n");
     }
     return;
 }
-
-// Temporary main function:
-/*
-int main(void) {
-    uint32_t return_integer = 54;
-    printf("%u \n", return_integer);
-    Graph *test_graph = graph_create(5, false);
-
-    printf("%d \n", graph_visited(test_graph, 4)); //Should return 0
-    graph_mark_visited(test_graph, 4);
-    printf("%d \n", graph_visited(test_graph, 4)); //Should return 1
-    graph_mark_unvisited(test_graph, 4);
-    printf("%d \n", graph_visited(test_graph, 4)); //Should return 0
-
-    printf("%u \n", graph_vertices(test_graph));
-    graph_print(test_graph);
-
-    printf("%d \n", graph_has_edge(test_graph, 4, 3)); //Should return 0
-    graph_add_edge(test_graph, 4, 3, 18);
-    printf("%d \n", graph_has_edge(test_graph, 4, 3)); //Should return 1
-    printf("%d \n", graph_edge_weight(test_graph, 4, 3)); //Should return 18
-
-    graph_add_edge(test_graph, 2, 1, 6);
-    graph_add_edge(test_graph, 2, 6, 2);
-    graph_add_edge(test_graph, 5, 2, 38);
-    graph_print(test_graph);
-    
-    graph_delete(&test_graph);
-    assert(test_graph == NULL);
-}*/
-
-
-

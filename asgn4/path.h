@@ -2,7 +2,7 @@
 #define __PATH_H__
 
 #include "graph.h"
-
+#include "vertices.h"
 #include <stdbool.h>
 #include <stdio.h>
 

@@ -1,4 +1,5 @@
 #include "stack.h"
+
 #include "vertices.h"
 
 #include <assert.h>
@@ -56,7 +57,6 @@ uint32_t stack_size(Stack *s) {
     return s->top;
 }
 
-
 // If the stack is full, return false, otherwise simply push an item to the top of the stack.
 bool stack_push(Stack *s, uint32_t x) {
     if (stack_full(s) == true) {
@@ -91,51 +91,18 @@ void stack_copy(Stack *dst, Stack *src) {
     for (uint32_t i = 0; i < stack_size(src); i++) {
         dst->items[i] = src->items[i];
     }
-    dst->top = stack_size(src);	
+    dst->top = stack_size(src);
     return;
 }
 
+// CITATION: Code for stack_print was provided by Professor Long in the asgn 4 handout.
 void stack_print(Stack *s, FILE *outfile, char *cities[]) {
     for (uint32_t i = 0; i < s->top; i++) {
         fprintf(outfile, "%s", cities[s->items[i]]);
-	if (i + 1 != s->top) {
-	    fprintf(outfile, " -> ");
-	}
+        if (i + 1 != s->top) {
+            fprintf(outfile, " -> ");
+        }
     }
     fprintf(outfile, "\n");
     return;
 }
-
-
-// Temporary main function:
-/*
-int main(void) {
-    uint32_t return_integer = 54;
-    Stack *test = stack_create(VERTICES);
-
-    stack_push(test, 49);
-    stack_push(test, 29);
-    stack_push(test, 32);
-    printf("%u \n", stack_size(test));
-    
-    stack_peek(test, &return_integer);
-    printf("%u \n", return_integer);       //Should print 32
-
-
-    Stack *duplicate = stack_create(VERTICES);
-    stack_copy(duplicate, test);
-    printf("%u \n", stack_size(duplicate));
-    
-    stack_pop(duplicate, &return_integer);
-    printf("%u \n", return_integer);       //Should print 32
-    stack_peek(duplicate, &return_integer);
-    printf("%u \n", return_integer);       //Should print 29
-
-
-    stack_delete(&test);
-    assert (test == NULL);
-    stack_delete(&duplicate);
-    assert (duplicate == NULL);
-
-    return 0;
-}*/
