@@ -54,7 +54,7 @@ void bv_set_bit(BitVector *v, uint32_t i) {
 
 uint8_t bv_get_bit(BitVector *v, uint32_t i) {
     if(i >= v->length) {
-        return 1;
+        return 2;
     }
     uint32_t byte = (i/8);
     uint32_t bit_in_byte = i % 8;
@@ -101,7 +101,7 @@ void bv_print(BitVector *v) {
 
 // Temporary main function
 
-
+/*
 int main(void) {
     BitVector *tester = bv_create(25);
 
@@ -124,4 +124,4 @@ int main(void) {
     assert(tester == NULL);
 
     return 0;
-}
+}*/
