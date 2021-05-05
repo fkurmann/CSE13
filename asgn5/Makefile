@@ -1,28 +1,28 @@
 CC = clang
-CFLAGS = -Wall -Werror -Wextra -Wpedantic
+CFLAGS = -Wall -Wextra -Wpedantic
 
-all: tsp
+all: test
 
-tsp: tsp.o path.o graph.o stack.o
-	$(CC) -o tsp tsp.o path.o graph.o stack.o -lm 
+test: encode.o decode.o bv.o bm.o
+	$(CC) -o test encode.o decode.o bv.o bm.o -lm 
 
-tsp.o: tsp.c
-	$(CC) $(CFLAGS) -c tsp.c
+encode.o: encode.c
+	$(CC) $(CFLAGS) -c encode.c
 
-path.o: path.c
-	$(CC) $(CFLAGS) -c path.c
+decode.o: decode.c
+	$(CC) $(CFLAGS) -c decode.c
 
-graph.o: graph.c
-	$(CC) $(CFLAGS) -c graph.c
+bv.o: bv.c
+	$(CC) $(CFLAGS) -c bv.c
 
-stack.o: stack.c
-	$(CC) $(CFLAGS) -c stack.c
+bm.o: bm.c
+	$(CC) $(CFLAGS) -c bm.c
 
 clean:
-	rm -f tsp tsp.o path.o graph.o stack.o
+	rm -f test encode.o decode.o bv.o bm.o
 
 format:
-	clang-format -i -style=file tsp.c path.c graph.c stack.c
+	clang-format -i -style=file encode.c decode.c bv.c bm.c
 
 scan-build: clean
 	scan-build make

@@ -78,6 +78,9 @@ uint8_t bm_get_bit(BitMatrix *m, uint32_t r, uint32_t c) {
 }
 
 BitMatrix *bm_from_data(uint8_t byte, uint32_t length) {
+    if (length > 8) {
+        return NULL;
+    }
     BitMatrix *bm = bm_create(1, length);
     for (uint32_t i = 0; i < length; i++) {
         if (byte % 2 == 1) {
@@ -90,7 +93,7 @@ BitMatrix *bm_from_data(uint8_t byte, uint32_t length) {
 
 uint8_t bm_to_data(BitMatrix *m) {
     uint8_t first_byte = 0;
-    for (uint32_t i = 0; i < 8; i++) {
+    for (uint32_t i = 0; i < 8 && i < bm_cols(m); i++) {
         first_byte += (pow(2, i) * bv_get_bit(m->vector, i));
     }
     return first_byte;
@@ -119,7 +122,7 @@ void bm_print(BitMatrix *m) {
     bv_print(m->vector);
     return;
 }
-
+/*
 int main(void) {
     BitMatrix *tester = bm_create(1, 2);
     BitMatrix *tester2 = bm_create(2, 2);
@@ -139,4 +142,4 @@ int main(void) {
     assert(tester2 == NULL);
 
     return 0;
-}
+}*/
