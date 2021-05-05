@@ -76,18 +76,44 @@ uint8_t bm_get_bit(BitMatrix *m, uint32_t r, uint32_t c) {
     uint32_t vector_position = m->cols * r + c;
     return (bv_get_bit(m->vector, vector_position));
 }
-/*
+
 BitMatrix *bm_from_data(uint8_t byte, uint32_t length) {
-    return;
-}*/
+    BitMatrix *bm = bm_create(1, length);
+    for (uint32_t i = 0; i < length; i++) {
+        if (byte % 2 == 1) {
+	    bm_set_bit(bm, 0, i);
+        }
+	byte = byte >> 1;
+    }
+    return bm;
+}
 
 uint8_t bm_to_data(BitMatrix *m) {
-    return 0;
+    uint8_t first_byte = 0;
+    for (uint32_t i = 0; i < 8; i++) {
+        first_byte += (pow(2, i) * bv_get_bit(m->vector, i));
+    }
+    return first_byte;
 }
-/*
+
 BitMatrix *bm_multiply(BitMatrix *A, BitMatrix *B) {
-    return;
-}*/
+    if (bm_cols(A) != bm_rows(B)) {
+        return NULL;
+    }
+    BitMatrix *C = bm_create(bm_rows(A), bm_cols(B));
+    for (uint32_t i = 0; i < bm_cols(B); i++) {
+        for (uint32_t j = 0; j < bm_rows(A); j++) {
+	    uint32_t sum = 0;
+            for (uint32_t k = 0; k < bm_cols(A); k++) {
+		sum += bm_get_bit(A, j, k) * bm_get_bit(B, k, i);
+	    }
+	    if (sum % 2 == 1) {
+	        bm_set_bit(C, j, i);
+	    }
+	}
+    }
+    return C;
+}
 
 void bm_print(BitMatrix *m) {
     bv_print(m->vector);
@@ -95,24 +121,17 @@ void bm_print(BitMatrix *m) {
 }
 
 int main(void) {
-    BitMatrix *tester = bm_create(4, 8);
-    BitMatrix *tester2 = bm_create(9, 11);
+    BitMatrix *tester = bm_create(1, 2);
+    BitMatrix *tester2 = bm_create(2, 2);
 
-    bm_set_bit(tester, 3, 5);
     bm_set_bit(tester, 0, 0);
-    bm_set_bit(tester, 2, 1);
+    bm_set_bit(tester2, 0, 0);
+    bm_set_bit(tester2, 0, 1);
     
-    bm_set_bit(tester2, 3, 5);
-    printf("%u \n", bm_get_bit(tester2, 3, 5));
-    bm_clr_bit(tester2, 3, 5);
-    printf("%u \n", bm_get_bit(tester2, 3, 5));
-    
-    printf("%u \n", bm_get_bit(tester, 0, 0));
-    printf("%u \n", bm_get_bit(tester, 2, 1));
-    printf("%u \n", bm_get_bit(tester, 4, 4));
-
     bm_print(tester);
-    
+    bm_print(tester2);
+    bm_print(bm_multiply(tester, tester2));
+
     bm_delete(&tester);
     bm_delete(&tester2);
 
