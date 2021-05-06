@@ -1,5 +1,6 @@
 #include "bm.h"
 #include "hamming.h"
+#include "helper.h"
 
 #include <assert.h>
 #include <getopt.h>
@@ -14,12 +15,26 @@
 // Command line argument options
 #define OPTIONS "i:o:h"
 
-/*
 int main(int argc, char **argv) {
     bool verbose_printing = false, outfile_given = false, infile_given = false;
+    uint8_t input_byte_lower, input_byte_upper, output_byte_lower = 22, output_byte_upper = 22;
+    BitMatrix *Transpose = bm_create(8, 4);
+    // Set lower half of bit matrix
+    for(uint32_t i = 0; i < 4; i++) {
+        bm_set_bit(Transpose, i + 4, i);
+    }
+    // Set upper half of bit matrix
+    for (uint32_t i = 4; i < 8; i++) {
+        for (uint32_t j = 0; j < 4; j++) {
+            if (i != j + 4) {
+	        bm_set_bit(Transpose, i, j);
+	    }
+	}
+    }
 
     FILE *output_file = stdout;
     FILE *input_file = stdin;
+    
     // Command line arguments get processed, booleans for verbose and undirected are set, in and outfiles are stored.
     int opt = 0;
     while ((opt = getopt(argc, argv, OPTIONS)) != -1) {
@@ -41,6 +56,7 @@ int main(int argc, char **argv) {
                 perror("Invalid output file");
                 return 1;
             }
+	    free(outfile);
             break;
         case 'i':
             // Set the infile string to the argument given by the user
@@ -56,21 +72,23 @@ int main(int argc, char **argv) {
             break;
         }
     }
-
-    BitMatrix *Transpose = bm_create(8, 4);
-    // Set lower half of bit matrix
-    for(uint32_t i = 0; i < 4; i++) {
-        bm_set_bit(Transpose, i + 4, i);
-    }
-    // Set upper half of bit matrix
-    for (uint32_t i = 4; i < 8; i++) {
-        for (uint32_t j = 0; j < 4; j++) {
-            if (i != j + 4) {
-	        bm_set_bit(Transpose, i, j);
-	    }
+    while(1) {
+        input_byte_lower = fgetc(input_file);
+        input_byte_upper = fgetc(input_file);
+	if (feof(input_file)) {
+	    break;
 	}
-    }
+	ham_decode(Transpose, input_byte_lower, &output_byte_lower);
+	ham_decode(Transpose, input_byte_upper, &output_byte_upper);
 
+	output_byte_lower = pack_byte(output_byte_upper, output_byte_lower);
+	
+	fprintf(output_file, "%c", output_byte_lower);
+        //fprintf(output_file, "\n");
+    }
+    
+    // Close the input output files if they are opened, delete ADT, end program.
+    fprintf(output_file, "\n");
     bm_delete(&Transpose);
     if (outfile_given == true) {
         fclose(output_file);
@@ -79,4 +97,4 @@ int main(int argc, char **argv) {
         fclose(input_file);
     }
     return 0;
-}*/
+}

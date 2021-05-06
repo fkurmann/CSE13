@@ -1,5 +1,6 @@
 #include "bm.h"
 #include "hamming.h"
+#include "helper.h"
 
 #include <assert.h>
 #include <getopt.h>
@@ -13,20 +14,6 @@
 
 // Command line argument options
 #define OPTIONS "i:o:h"
-
-// CITATION: These three helper functions were provided by Professor Long in the asignment 5 handout.
-
-uint8_t lower_nibble(uint8_t val) {
-    return val & 0xF;
-}
-uint8_t upper_nibble(uint8_t val) {
-    return val >> 4;
-}
-
-uint8_t pack_byte(uint8_t upper, uint8_t lower) {
-    return (upper<< 4) | (lower & 0xF);
-}
-
 
 int main(int argc, char **argv) {
     bool  outfile_given = false, infile_given = false;
@@ -103,12 +90,12 @@ int main(int argc, char **argv) {
 	lower_input_nibble = ham_encode(Generator, lower_input_nibble);
 	upper_input_nibble = ham_encode(Generator, upper_input_nibble);
 
-	printf("%c", lower_input_nibble);
-	printf("%c", upper_input_nibble);
+	fprintf(output_file, "%c", lower_input_nibble);
+	fprintf(output_file, "%c", upper_input_nibble);
     }
     
     // Delete the generator, end the program.
-    printf("\n");
+    fprintf(output_file, "\n");
     bm_delete(&Generator);
     // Close the input output files if they were opened.
     if (outfile_given == true) {
