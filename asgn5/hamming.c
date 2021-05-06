@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+extern uint32_t bytes_processed, uncorrected_errors, corrected_errors;
 uint32_t lookup_table[] = {10, 4, 5, 9, 6, 9, 9, 3, 7, 9, 9, 2, 9, 1, 0, 9};
 
 uint8_t ham_encode(BitMatrix *G, uint8_t msg) {
@@ -17,16 +18,15 @@ uint8_t ham_encode(BitMatrix *G, uint8_t msg) {
 
 HAM_STATUS ham_decode(BitMatrix *Ht, uint8_t code, uint8_t *msg){
     BitMatrix *Encoded = bm_from_data(code, 8); // Turn the byte into a bit matrix to multiply with the transpose.
-
+    bytes_processed++;
     uint8_t error = bm_to_data(bm_multiply(Encoded, Ht));  //the decoder spits out 4 bits, these are the error message, bm to data turns it into a uint.
-    //printf("%u \n", error);
-    //printf("%u \n", lower_nibble(code));
     
     bm_delete(&Encoded);
     
     // Case 1: Ham error
     if (lookup_table[error] == 9) {
-        *msg = lower_nibble(code); 
+        uncorrected_errors++;
+	*msg = lower_nibble(code); 
 	return HAM_ERR;
     }
 
@@ -38,6 +38,7 @@ HAM_STATUS ham_decode(BitMatrix *Ht, uint8_t code, uint8_t *msg){
 
     // Case 3: Ham corrected
     else {
+	corrected_errors++;
 	// Turn the output bit into a bitmatrix so that it can be adjusted according to the error found by the decoder.
 	BitMatrix *Decoded = bm_from_data(lower_nibble(code), 8);
 	if (bm_get_bit(Decoded, 0, lookup_table[error]) == 1) {

@@ -108,7 +108,7 @@ BitMatrix *bm_multiply(BitMatrix *A, BitMatrix *B) {
         for (uint32_t j = 0; j < bm_rows(A); j++) {
 	    uint32_t sum = 0;
             for (uint32_t k = 0; k < bm_cols(A); k++) {
-		sum += bm_get_bit(A, j, k) * bm_get_bit(B, k, i);
+		sum += (bm_get_bit(A, j, k) * bm_get_bit(B, k, i));
 	    }
 	    if (sum % 2 == 1) {
 	        bm_set_bit(C, j, i);
@@ -122,24 +122,3 @@ void bm_print(BitMatrix *m) {
     bv_print(m->vector);
     return;
 }
-/*
-int main(void) {
-    BitMatrix *tester = bm_create(1, 2);
-    BitMatrix *tester2 = bm_create(2, 2);
-
-    bm_set_bit(tester, 0, 0);
-    bm_set_bit(tester2, 0, 0);
-    bm_set_bit(tester2, 0, 1);
-    
-    bm_print(tester);
-    bm_print(tester2);
-    bm_print(bm_multiply(tester, tester2));
-
-    bm_delete(&tester);
-    bm_delete(&tester2);
-
-    assert(tester == NULL);
-    assert(tester2 == NULL);
-
-    return 0;
-}*/
