@@ -16,10 +16,11 @@ decode: decode.o hamming.o bv.o bm.o helper.o
 	$(CC) -o decode decode.o hamming.o bv.o bm.o helper.o -lm 
 
 error: error.o
-	$(CC) -o error decode.o hamming.o bv.o bm.o helper.o -lm 
+	$(CC) -o error error.o -lm
+
 
 entropy: entropy.o
-	$(CC) -o entropy decode.o hamming.o bv.o bm.o helper.o -lm 
+	$(CC) -o entropy entropy.o -lm 
 
 helper.o: helper.c
 	$(CC) $(CFLAGS) -c helper.c

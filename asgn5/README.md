@@ -35,7 +35,7 @@ This assignment contains an encoder and a decoder. The encoder generates a Hammi
 
 ### Build:
 
-Enter command $ make
+Enter command $ make {decode, encode, error, entropy, clean, format} to build/clear/format the desired program(s).
 
 There should be no flags or errors during this process
 
@@ -53,4 +53,10 @@ The program will show options to choose from which print some or all tests with 
 
 **-o** Follow with the name of the output file to print encoded/decoded bits to in the for of uint8s. If none is specified, command line is output.
 
-Enter command $ ./error and $ ./entropy
+Enter command $ ./error and $ ./entropy to run the error and entropy programs. Note, this programs will do nothing if run by themselves, they need to be run together with files fed to them from the output of the encode or decode functions or if fed specific files to operate on.
+
+**-h** Print help message describing the program and its command line options
+
+**-s** ERROR ONLY: Follow with the seed for the error program.
+
+**-e** ERROR ONLY: Follow with the decimal for the error rate for the error program.

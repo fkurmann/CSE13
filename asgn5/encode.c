@@ -10,15 +10,21 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/stat.h>
 #include <unistd.h>
 
+// CITATION: The code for the file permission carryover was provided by Professor Long in the Asgn5 handout.
+// Global variables
+uint32_t bytes_processed, uncorrected_errors, corrected_errors;
 // Command line argument options
 #define OPTIONS "i:o:h"
 
 int main(int argc, char **argv) {
-    bool  outfile_given = false, infile_given = false;
+    // Initilize variables used by main method
+    struct stat statbuf;
+    bool outfile_given = false, infile_given = false;
     uint8_t input_byte, lower_input_nibble, upper_input_nibble;
-    
+
     FILE *output_file = stdout;
     FILE *input_file = stdin;
 
@@ -31,10 +37,10 @@ int main(int argc, char **argv) {
     // Set the right half of the generator
     for (uint32_t i = 4; i < 8; i++) {
         for (uint32_t j = 0; j < 4; j++) {
-	    if (i != j + 4) {
-		bm_set_bit(Generator, j , i);
-	    }
-	}
+            if (i != j + 4) {
+                bm_set_bit(Generator, j, i);
+            }
+        }
     }
 
     // Command line arguments get processed, booleans for verbose and undirected are set, in and outfiles are stored.
@@ -49,6 +55,7 @@ int main(int argc, char **argv) {
                    "  -o outfile    Specify an outfile to write to\n");
             break;
         case 'o':
+            // If an outfile is given, set it as output if it exists
             outfile_given = true;
             char *outfile = strdup(optarg);
             output_file = fopen(outfile, "wb");
@@ -62,38 +69,43 @@ int main(int argc, char **argv) {
             // Set the infile string to the argument given by the user
             infile_given = true;
             char *infile = strdup(optarg);
-            
+
             input_file = fopen(infile, "r");
             if (input_file == NULL) {
                 perror("Invalid input file");
                 return 1;
             }
+
+            // Check the file permissions and store them
+            fstat(fileno(input_file), &statbuf);
+
             free(infile);
             break;
         }
     }
-    
+
     // Read the input file byte by byte, breaking if the end of the file is reached.
-    while(1) {
-        input_byte = fgetc(input_file);
-        // Don't encode spaces, stop when end of file is reached.
-	if (input_byte == 32) {
-	    continue;
-	}
-        if (feof(input_file)) {
-	    break;
-	}
-	// Split, encode, and print the current byte
-	lower_input_nibble = lower_nibble(input_byte);
-	upper_input_nibble = upper_nibble(input_byte);
-
-	lower_input_nibble = ham_encode(Generator, lower_input_nibble);
-	upper_input_nibble = ham_encode(Generator, upper_input_nibble);
-
-	fprintf(output_file, "%c", lower_input_nibble);
-	fprintf(output_file, "%c", upper_input_nibble);
+    if (outfile_given == true) {
+        fchmod(fileno(output_file), statbuf.st_mode);
     }
-    
+
+    // For every byte in the input, split it into two nibbles to encode, return the two encoded bytes in order
+    while (1) {
+        input_byte = fgetc(input_file);
+        if (feof(input_file)) {
+            break;
+        }
+        // Split, encode, and print the current byte
+        lower_input_nibble = lower_nibble(input_byte);
+        upper_input_nibble = upper_nibble(input_byte);
+
+        lower_input_nibble = ham_encode(Generator, lower_input_nibble);
+        upper_input_nibble = ham_encode(Generator, upper_input_nibble);
+
+        fprintf(output_file, "%c", lower_input_nibble);
+        fprintf(output_file, "%c", upper_input_nibble);
+    }
+
     // Delete the generator, end the program.
     fprintf(output_file, "\n");
     bm_delete(&Generator);
