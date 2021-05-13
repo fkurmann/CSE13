@@ -1,7 +1,5 @@
 #include "stack.h"
 
-#include "vertices.h"
-
 #include <assert.h>
 #include <inttypes.h>
 #include <math.h>
@@ -9,14 +7,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-// CITATION: The stack constructor, destructor, and structure defenition are those given by Professor Long in the
-// assignment 3 handout. The empty, full, size, push, pop functions are inspired by Professor Long's code from the
-// stacks/queues lecture.
-
 struct Stack {
     uint32_t top;
     uint32_t capacity;
-    int64_t *items;
+    Node **items;
 };
 
 // Create a dynamically allocated stack with a specified *initial* capacity.
@@ -25,7 +19,7 @@ Stack *stack_create(uint32_t capacity) {
     if (s) {
         s->top = 0;
         s->capacity = capacity;
-        s->items = (int64_t *) calloc(capacity, sizeof(int64_t));
+        s->items = (Node **) calloc(capacity, sizeof(Node));
 
         if (!s->items) {
             free(s);
@@ -58,51 +52,69 @@ uint32_t stack_size(Stack *s) {
 }
 
 // If the stack is full, return false, otherwise simply push an item to the top of the stack.
-bool stack_push(Stack *s, uint32_t x) {
+bool stack_push(Stack *s, Node *n) {
     if (stack_full(s) == true) {
         return false;
     }
-    s->items[s->top] = x;
+    s->items[s->top] = n;
     s->top++;
     return true;
 }
 
 // If the stack is empty, it cannot pop, otherwise pop the top item setting the x pointer equal to that item.
-bool stack_pop(Stack *s, uint32_t *x) {
+bool stack_pop(Stack *s, Node **n) {
     if (stack_empty(s) == true) {
         return false;
     }
     s->top--;
-    *x = s->items[s->top];
+    *n = s->items[s->top];
     return true;
 }
 
-// If the stack is empty, return false, otherwise send to x the value on top of the stack (top - 1)
-bool stack_peek(Stack *s, uint32_t *x) {
-    if (stack_empty(s) == true) {
-        return false;
+void stack_print(Stack *s) {
+    for (uint32_t i = 0; i < stack_size(s); i++) {
+        node_print(s->items[i]);
     }
-    *x = s->items[s->top - 1];
-    return true;
-}
-
-// Copy the items and the value of the top to the destination stack
-void stack_copy(Stack *dst, Stack *src) {
-    for (uint32_t i = 0; i < stack_size(src); i++) {
-        dst->items[i] = src->items[i];
-    }
-    dst->top = stack_size(src);
     return;
 }
 
-// CITATION: Code for stack_print was provided by Professor Long in the asgn 4 handout.
-void stack_print(Stack *s, FILE *outfile, char *cities[]) {
-    for (uint32_t i = 0; i < s->top; i++) {
-        fprintf(outfile, "%s", cities[s->items[i]]);
-        if (i + 1 != s->top) {
-            fprintf(outfile, " -> ");
-        }
-    }
-    fprintf(outfile, "\n");
-    return;
+int main(){ 
+    Stack *tester = stack_create(10);
+    
+    Node *one = node_create('A', 1);
+    Node *two = node_create('B', 246);
+    Node *three = node_create('C', 15);
+    Node *four = node_create('D', 266);
+    Node *five = node_create('D', 13);
+    
+    stack_push(tester, one);
+    stack_push(tester, two);
+    stack_push(tester, three);
+    stack_push(tester, four);
+    stack_push(tester, four);
+    stack_push(tester, four);
+    stack_push(tester, four);
+    stack_push(tester, four);
+    printf("%u \n", stack_push(tester, four));
+    printf("%u \n", stack_push(tester, four));
+    printf("%u \n", stack_push(tester, four));
+   
+    printf("%u \n", stack_size(tester));
+
+    stack_pop(tester, &five);
+    stack_pop(tester, &five);
+    stack_pop(tester, &five);
+    stack_pop(tester, &five);
+    stack_pop(tester, &five);
+    stack_pop(tester, &five);
+    stack_pop(tester, &five);
+    stack_pop(tester, &five);
+    stack_pop(tester, &five);
+    printf("%u \n", stack_pop(tester, &five));
+    printf("%u \n", stack_pop(tester, &five));
+    
+    stack_print(tester);
+
+
+    stack_delete(&tester);
 }
