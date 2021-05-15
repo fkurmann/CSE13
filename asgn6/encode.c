@@ -1,8 +1,11 @@
+
 #include "defines.h"
 #include "header.h"
 #include "huffman.h"
 #include "io.h"
-//#include "code.h" CHECK IF YOU NEED
+#include "code.h"
+#include "pq.h"
+#include "node.h"
 
 #include <assert.h>
 #include <getopt.h>
@@ -14,6 +17,7 @@
 #include <string.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <fcntl.h>
 
 // Global variables
 uint8_t buffer[BLOCK];
@@ -21,14 +25,35 @@ uint32_t bytes_processed, uncorrected_errors, corrected_errors;
 // Command line argument options
 #define OPTIONS "i:o:hv"
 
+// Helper functions:
+// A helper file to print the histogram
+void print_histogram(uint64_t *histogram) {
+    for (int i = 0; i < 256; i += 8) {
+	printf("Indexes from %3u \t", i);
+	for (int j = 0; j < 8; j++) {
+            printf("%lu \t", histogram[i + j]);
+	}
+	printf("\n");
+    }
+    return;
+}
+
 int main(int argc, char **argv) {
     // Initilize variables used by main method
     struct stat statbuf;
     bool outfile_given = false, infile_given = false, verbose_printing;
-    uint8_t input_byte, lower_input_nibble, upper_input_nibble;
+    
+    // Create and initilize the histogram    
+    uint64_t histogram[ALPHABET];
+    for (int i = 0; i < 256; i++) {
+        histogram[i] = 0;
+    }
+    histogram[0]++;
+    histogram[255]++;
 
-    FILE *output_file = stdout;
-    FILE *input_file = stdin;
+    // Set input and output files to 0, which represents stdin/stdout
+    int output_file = 0;
+    int input_file = 0;
 
     // Command line arguments get processed, booleans for verbose and undirected are set, in and outfiles are stored.
     int opt = 0;
@@ -43,29 +68,19 @@ int main(int argc, char **argv) {
 		   "  -v            Print statistics on compression\n");
             break;
         case 'o':
-            // If an outfile is given, set it as output if it exists
+            // If an outfile is given, set it as output
             outfile_given = true;
             char *outfile = strdup(optarg);
-            output_file = fopen(outfile, "wb");
-            if (output_file == NULL) {
-                perror("Invalid output file");
-                return 1;
-            }
-            free(outfile);
+	    output_file = open(outfile, O_WRONLY | O_CREAT);
+	    free(outfile);
             break;
         case 'i':
             // Set the infile string to the argument given by the user
             infile_given = true;
             char *infile = strdup(optarg);
-
-            input_file = fopen(infile, "r");
-            if (input_file == NULL) {
-                perror("Invalid input file");
-                return 1;
-            }
-
+            input_file = open(infile, O_RDONLY);
             // Check the file permissions and store them
-            fstat(fileno(input_file), &statbuf);
+            //fstat(fileno(input_file), &statbuf);
 
             free(infile);
             break;
@@ -75,17 +90,47 @@ int main(int argc, char **argv) {
         }
     }
 
+    int input_length = read_bytes(input_file, buffer, BLOCK);
+    //write_bytes(output_file, buffer, 10);
+    //printf("\n");
+    //printf("\n");
+
+    // Create the histogram given the contents of the buffer
+    for (int i = 0; i < input_length; i++) {
+        printf("%u \n", buffer[i]);
+        histogram[buffer[i]]++;
+    }
+
+    // TEMPORARY: Print the histogram to check it
+    // print_histogram(histogram);
+
+
+    // Call Huffman functions to build a tree
+    Node *root = build_tree(histogram); 
+    node_print(root);
+
+    // Call Huffman functions to make the codes
+    //Code code_table = code_init();
+    //build_codes(root, &code_table);
+    
+
+
+
+
+
+
+
     // Set outfile permissions to equal infile permissions
     if (outfile_given == true) {
-        fchmod(fileno(output_file), statbuf.st_mode);
+        //fchmod(fileno(output_file), statbuf.st_mode);
     }
 
     // Close the input output files if they were opened.
     if (outfile_given == true) {
-        fclose(output_file);
+        close(output_file);
     }
     if (infile_given == true) {
-        fclose(input_file);
+        close(input_file);
     }
     return 0;
 }
