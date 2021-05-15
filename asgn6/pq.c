@@ -60,6 +60,7 @@ bool enqueue(PriorityQueue *pq, Node *n) {
     if (pq_full(pq) == true) {
         return false;
     }
+    pq->size++;
     // While loop to determine insertion position for node to enqueue
     while (pq->tail < pq->head) {
         if ((pq->items[pq->tail]).frequency > n->frequency) {
@@ -73,16 +74,40 @@ bool enqueue(PriorityQueue *pq, Node *n) {
     // Shift all nodes that are effected by the insertion towards the head, insert the node to enqueue
     uint32_t index = pq->head;
     pq->head++;
+    
+    //printf("node in euqueue\n");
+    //node_print(n);
+    
+    Node *zero = node_create('#', 0);
 
+    //printf("priority queue\n");
+    //pq_print(pq);
     while (index > pq->tail) {
         pq->items[index] = pq->items[index-1];
 	index--;
     }
-    pq->items[pq->tail] = *n;
     
+    //printf("node in euqueue\n");
+    //node_print(n);
+    
+    pq->items[pq->tail] = *zero;
+    
+    //printf("priority queue\n");
+    //pq_print(pq);
+
+
+    //printf("node in euqueue\n");
+    //node_print(n);
+    
+    pq->items[pq->tail] = *n;
+    node_delete(&zero);
+
+    //printf("priority queue\n");
+    //pq_print(pq);
+
+
     //Return tail to zero and ajust size
     pq->tail = 0;
-    pq->size++;
     return true;
 }
 
@@ -106,7 +131,7 @@ void pq_print(PriorityQueue *pq) {
     }
     return;
 }
-
+/*
 int main(void) {
     PriorityQueue *test_queue = pq_create(10);
     
@@ -125,6 +150,7 @@ int main(void) {
 
     dequeue(test_queue, &five);
 
+    printf("Print the raping queue \n");
     pq_print(test_queue);
     printf("And now for the node: \n");
     node_print(five);
@@ -132,4 +158,4 @@ int main(void) {
     pq_delete(&test_queue);
 
     return 0;
-}
+}*/

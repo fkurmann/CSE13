@@ -50,9 +50,16 @@ void node_print(Node *n) {
 int main(void) {
     //Node *tester = node_create('k', 43);
     Node *left_tester = node_create('A', 16);
-    Node *right_tester = node_create('a', 7);
+    //Node *right_tester = node_create('a', 7);
 
-    node_print(node_join(left_tester, right_tester));
+    Node *rightleft_tester = node_create('E', 3);
+    Node *rightright_tester = node_create('B', 2);
+    Node *right_tester = node_join(rightleft_tester, rightright_tester);
+    
+    Node *tester = node_join(left_tester, right_tester);
+    
+    node_print(tester);
+    node_print(tester->right);
 
     //node_delete(&tester);
     node_delete(&left_tester);

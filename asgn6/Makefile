@@ -1,13 +1,7 @@
 CC = clang
-CFLAGS = -Wall -Werror -Wextra -Wpedantic
+CFLAGS = -Wall -Wextra -Wpedantic
 
-all: pq stack code
-
-pq: pq
-
-stack: stack
-
-code: code
+all: encode
 
 pq: pq.o node.o
 	$(CC) -o pq pq.o node.o -lm 
@@ -17,6 +11,12 @@ stack: stack.o node.o
 
 code: pq.o code.o
 	$(CC) -o code code.o -lm 
+
+encode: encode.o io.o code.o huffman.o pq.o node.o
+	$(CC) -o encode encode.o io.o code.o huffman.o pq.o node.o -lm 
+
+decode: decode.o io.o
+	$(CC) -o decode decode.o io.o -lm 
 
 pq.o: pq.c
 	$(CC) $(CFLAGS) -c pq.c
@@ -30,10 +30,23 @@ stack.o: stack.c
 code.o: code.c
 	$(CC) $(CFLAGS) -c code.c
 
+encode.o: encode.c
+	$(CC) $(CFLAGS) -c encode.c
+
+decode.o: decode.c
+	$(CC) $(CFLAGS) -c decode.c
+
+io.o: io.c
+	$(CC) $(CFLAGS) -c io.c
+
+huffman.o: huffman.c
+	$(CC) $(CFLAGS) -c huffman.c
+
+
 clean:
-	rm -f pq stack code stack.o pq.o node.o code.o
+	rm -f pq stack code encode decode stack.o pq.o node.o code.o encode.o decode.o io.o huffman.o
 
 format:
-	clang-format -i -style=file stack.c pq.c node.c code.c
+	clang-format -i -style=file stack.c pq.c node.c code.c encode.c decode.c io.c huffman.c
 scan-build: clean
 	scan-build make

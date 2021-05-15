@@ -22,6 +22,7 @@
 // Global variables
 uint8_t buffer[BLOCK];
 uint32_t bytes_processed, uncorrected_errors, corrected_errors;
+Code c;
 // Command line argument options
 #define OPTIONS "i:o:hv"
 
@@ -106,12 +107,38 @@ int main(int argc, char **argv) {
 
 
     // Call Huffman functions to build a tree
-    Node *root = build_tree(histogram); 
-    node_print(root);
+    Node *tree_root = build_tree(histogram); 
+    printf("\n");
+    printf("\n");
+    node_print(tree_root);
 
     // Call Huffman functions to make the codes
-    //Code code_table = code_init();
-    //build_codes(root, &code_table);
+    Code code_table[ALPHABET];
+    Code zero = code_init();
+    for (int i = 0; i < ALPHABET; i++) {
+        code_table[i] = zero;
+    }
+    
+    
+    printf("\n");
+    printf("\n");
+    node_print(tree_root->right);
+    node_print((tree_root->right)->right);
+
+    
+    
+    /*for (int i = 0; i < ALPHABET; i++) {
+        code_print(&code_table[i]);
+    }*/
+    printf("\n");
+    printf("\n");
+    c = code_init();
+    build_codes(tree_root, code_table);
+    /*
+    for (int i = 0; i < ALPHABET; i++) {
+        code_print(&code_table[i]);
+    }*/
+
     
 
 

@@ -83,6 +83,7 @@ void code_print(Code *c) {
 }
 
 // Temporary main method
+/*
 int main () {
     Code tester = code_init();
 
@@ -114,4 +115,4 @@ int main () {
 
     printf("OKAY now printing the code\n");
     code_print(&tester);
-}
+}*/
