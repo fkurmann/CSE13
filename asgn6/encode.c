@@ -22,12 +22,14 @@
 // Global variables
 uint8_t buffer[BLOCK];
 uint32_t bytes_processed, uncorrected_errors, corrected_errors;
+uint16_t tree_size;
 Code c;
+
 // Command line argument options
 #define OPTIONS "i:o:hv"
 
 // Helper functions:
-// A helper file to print the histogram
+// A helper function to print the histogram
 void print_histogram(uint64_t *histogram) {
     for (int i = 0; i < 256; i += 8) {
 	printf("Indexes from %3u \t", i);
@@ -37,6 +39,37 @@ void print_histogram(uint64_t *histogram) {
 	printf("\n");
     }
     return;
+}
+
+// Constructor for header
+Header *header_create(uint16_t permissions, uint16_t tree_size, uint64_t file_size) {
+    Header *h = (Header *) malloc(sizeof(Header));
+    if (h) {
+        h->magic = MAGIC;
+	h->permissions = permissions;
+	h->tree_size = tree_size;
+	h->file_size = file_size;
+    }
+    return h;
+}
+// Destructor for header
+void header_delete(Header **h) {
+    if (*h) {
+        free(*h);
+	*h = NULL;
+    }
+    return;
+}
+
+// Function that does post order traversal of tree to write it to the outfile
+void tree_to_outfile(*Node root, int output_file) {
+	return;
+}
+
+
+// Function for writing code for each symbol to the outfile
+void write_codes(Code table[ALPHABET], int output_file) {
+	return;
 }
 
 int main(int argc, char **argv) {
@@ -52,6 +85,13 @@ int main(int argc, char **argv) {
     histogram[0]++;
     histogram[255]++;
 
+    // Create and initilize the code array
+    Code code_table[ALPHABET];
+    Code zero = code_init();
+    for (int i = 0; i < ALPHABET; i++) {
+        code_table[i] = zero;
+    }
+  
     // Set input and output files to 0, which represents stdin/stdout
     int output_file = 0;
     int input_file = 0;
@@ -81,7 +121,7 @@ int main(int argc, char **argv) {
             char *infile = strdup(optarg);
             input_file = open(infile, O_RDONLY);
             // Check the file permissions and store them
-            //fstat(fileno(input_file), &statbuf);
+            fstat((input_file), &statbuf);
 
             free(infile);
             break;
@@ -90,11 +130,9 @@ int main(int argc, char **argv) {
 	    break;
         }
     }
-
+    // Read from the input into the buffer
     int input_length = read_bytes(input_file, buffer, BLOCK);
     //write_bytes(output_file, buffer, 10);
-    //printf("\n");
-    //printf("\n");
 
     // Create the histogram given the contents of the buffer
     for (int i = 0; i < input_length; i++) {
@@ -102,36 +140,10 @@ int main(int argc, char **argv) {
         histogram[buffer[i]]++;
     }
 
-    // TEMPORARY: Print the histogram to check it
-    // print_histogram(histogram);
-
-
     // Call Huffman functions to build a tree
     Node *tree_root = build_tree(histogram); 
-    printf("\n");
-    printf("\n");
-    node_print(tree_root);
 
     // Call Huffman functions to make the codes
-    Code code_table[ALPHABET];
-    Code zero = code_init();
-    for (int i = 0; i < ALPHABET; i++) {
-        code_table[i] = zero;
-    }
-    
-    
-    printf("\n");
-    printf("\n");
-    node_print(tree_root->right);
-    node_print((tree_root->right)->right);
-
-    
-    
-    /*for (int i = 0; i < ALPHABET; i++) {
-        code_print(&code_table[i]);
-    }*/
-    printf("\n");
-    printf("\n");
     c = code_init();
     build_codes(tree_root, code_table);
     /*
@@ -140,16 +152,19 @@ int main(int argc, char **argv) {
     }*/
 
     
-
-
-
-
+    // Call constructor for the header, then write the header to the outfile and call header destructor 
+    uint64_t file_size = (uint64_t) input_length; //ASGN DOC says you can get this number using fstat() - this seems to work?
+    uint16_t permissions = (uint16_t) statbuf.st_mode;
+    tree_size = (3 * tree_size) - 1;
+    Header *header = header_create(permissions, tree_size, file_size);
+    //WRITE HEADER TO OUTFILE!!! USING WRITING FUNCTION
+    header_delete(&header);
 
 
 
     // Set outfile permissions to equal infile permissions
     if (outfile_given == true) {
-        //fchmod(fileno(output_file), statbuf.st_mode);
+        fchmod((output_file), statbuf.st_mode);
     }
 
     // Close the input output files if they were opened.

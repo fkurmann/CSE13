@@ -13,6 +13,7 @@
 
 // Global variables will be modified by the encoder and decoder functions.
 extern uint32_t bytes_processed, uncorrected_errors, corrected_errors;
+extern uint16_t tree_size;
 extern Code c;
 
 Node *build_tree(uint64_t hist[static ALPHABET]) {
@@ -20,23 +21,20 @@ Node *build_tree(uint64_t hist[static ALPHABET]) {
     PriorityQueue *build_queue = pq_create(ALPHABET);
     for (int i = 0; i < ALPHABET; i++) {
         if (hist[i] != 0) {
+	    tree_size++;
 	    enqueue(build_queue, node_create(i, hist[i]));
 	}
     }
-    //pq_print(build_queue);
     
     Node *left_holder = node_create('#', 0);
     Node *right_holder = node_create('#', 0);
     // Build the tree by joining nodes
     while (pq_size(build_queue) > 1) {
+        // Dequeue 2 nodes, the first will be left, the second right
         dequeue(build_queue, &left_holder);
-        //printf("Left Node \n");
-	//node_print(left);
         dequeue(build_queue, &right_holder);
-        //printf("Right Node \n");
-	//node_print(right);
-        //printf("Joined Node left\n");
 	
+        // Make a replica of both dequeued nodes, this is essential since you are writing over the priority queue
 	Node *left = node_create(left_holder->symbol, left_holder->frequency);
 	if (left_holder->left != NULL) {	
 	    left->left = left_holder->left;
@@ -44,7 +42,6 @@ Node *build_tree(uint64_t hist[static ALPHABET]) {
 	if (left_holder->right != NULL) {	
 	    left->right = left_holder->right;
 	}
-	
 	Node *right = node_create(right_holder->symbol, right_holder->frequency);
 	if (right_holder->left != NULL) {	
 	    right->left = right_holder->left;
@@ -53,17 +50,9 @@ Node *build_tree(uint64_t hist[static ALPHABET]) {
 	    right->right = right_holder->right;
 	}
 
+	// Join and euqueu the left and right (replica) nodes
 	Node *joined = node_join(left, right);
-
-	//node_print(joined->left);
-        //printf("Joined Node right before euqueueuing\n");
-	//node_print(joined->right);
-        //node_print((joined->right)->right);
-
 	enqueue(build_queue, joined);
-        //printf("Joined node Right After euqueuing\n");
-	//node_print(joined->right);
-        //node_print((joined->right)->right);
 	
 	//node_delete(&right);
 	//node_delete(&left);
@@ -72,7 +61,7 @@ Node *build_tree(uint64_t hist[static ALPHABET]) {
     //node_delete(&left_holder); //YOU ARE gonna have to modeify the node delete function to also delete a node's children, left and right WILL have to be deleted here. Yeah.
     //node_delete(&right_holder);
 	    
-    
+    // Return the root node
     Node *return_node = node_create('#', 0);
     dequeue(build_queue, &return_node);
     
@@ -80,21 +69,10 @@ Node *build_tree(uint64_t hist[static ALPHABET]) {
 }
 
 void build_codes(Node *root, Code table[static ALPHABET]) {
-    /*
-    printf("Root \n");
-    node_print(root);
-    printf("Left \n");
-    node_print(root->left);
-    printf("Right \n");
-    node_print(root->right);
-    */
-    
     uint8_t popping_bit = 0;
     
     // If a node is NOT a root or interior node, push completed code
     if (root->symbol != '$') {
-	printf("%u\n", code_size(&c));
-	code_print(&c);
         table[root->symbol] = c;
 	return;
     }

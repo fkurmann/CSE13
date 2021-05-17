@@ -74,38 +74,12 @@ bool enqueue(PriorityQueue *pq, Node *n) {
     // Shift all nodes that are effected by the insertion towards the head, insert the node to enqueue
     uint32_t index = pq->head;
     pq->head++;
-    
-    //printf("node in euqueue\n");
-    //node_print(n);
-    
-    Node *zero = node_create('#', 0);
-
-    //printf("priority queue\n");
-    //pq_print(pq);
     while (index > pq->tail) {
         pq->items[index] = pq->items[index-1];
 	index--;
     }
-    
-    //printf("node in euqueue\n");
-    //node_print(n);
-    
-    pq->items[pq->tail] = *zero;
-    
-    //printf("priority queue\n");
-    //pq_print(pq);
-
-
-    //printf("node in euqueue\n");
-    //node_print(n);
-    
     pq->items[pq->tail] = *n;
-    node_delete(&zero);
-
-    //printf("priority queue\n");
-    //pq_print(pq);
-
-
+    
     //Return tail to zero and ajust size
     pq->tail = 0;
     return true;

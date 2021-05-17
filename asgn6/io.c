@@ -42,7 +42,7 @@ int write_bytes(int outfile, uint8_t *buf, int nbytes) {
     return counter;
 }
 
-bool read_bit(int outfile, uint8_t *buf, int nbytes) {
+bool read_bit(int infile, uint8_t *bit) {
 
     return false;
 }
