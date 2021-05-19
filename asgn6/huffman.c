@@ -3,6 +3,7 @@
 #include "code.h"
 #include "defines.h"
 #include "node.h"
+#include "stack.h"
 
 #include <assert.h>
 #include <inttypes.h>
@@ -13,7 +14,6 @@
 
 // Global variables will be modified by the encoder and decoder functions.
 extern uint32_t bytes_processed, uncorrected_errors, corrected_errors;
-extern uint16_t tree_size;
 extern Code c;
 
 Node *build_tree(uint64_t hist[static ALPHABET]) {
@@ -21,7 +21,6 @@ Node *build_tree(uint64_t hist[static ALPHABET]) {
     PriorityQueue *build_queue = pq_create(ALPHABET);
     for (int i = 0; i < ALPHABET; i++) {
         if (hist[i] != 0) {
-	    tree_size++;
 	    enqueue(build_queue, node_create(i, hist[i]));
 	}
     }
@@ -42,6 +41,7 @@ Node *build_tree(uint64_t hist[static ALPHABET]) {
 	if (left_holder->right != NULL) {	
 	    left->right = left_holder->right;
 	}
+	
 	Node *right = node_create(right_holder->symbol, right_holder->frequency);
 	if (right_holder->left != NULL) {	
 	    right->left = right_holder->left;
@@ -51,20 +51,17 @@ Node *build_tree(uint64_t hist[static ALPHABET]) {
 	}
 
 	// Join and euqueu the left and right (replica) nodes
-	Node *joined = node_join(left, right);
-	enqueue(build_queue, joined);
+	enqueue(build_queue, node_join(left, right));
 	
-	//node_delete(&right);
-	//node_delete(&left);
     }
-    
-    //node_delete(&left_holder); //YOU ARE gonna have to modeify the node delete function to also delete a node's children, left and right WILL have to be deleted here. Yeah.
-    //node_delete(&right_holder);
-	    
+    //node_print(left_holder);
+    //node_delete(&left_holder);
+
     // Return the root node
     Node *return_node = node_create('#', 0);
     dequeue(build_queue, &return_node);
     
+    //pq_delete(&build_queue);
     return return_node;
 }
 
@@ -73,7 +70,8 @@ void build_codes(Node *root, Code table[static ALPHABET]) {
     
     // If a node is NOT a root or interior node, push completed code
     if (root->symbol != '$') {
-        table[root->symbol] = c;
+        //printf("Saving a code \n");
+	table[root->symbol] = c;
 	return;
     }
 
@@ -90,8 +88,44 @@ void build_codes(Node *root, Code table[static ALPHABET]) {
 }
 
 Node *rebuild_tree(uint16_t nbytes, uint8_t tree[static nbytes]) {
-    Node *bitch_node = node_create('b', 16);
-    return bitch_node;
+    Stack *tree_rebuilder = stack_create((uint32_t) nbytes);
+    for (uint16_t i = 0; i < nbytes; i++) {
+        if (tree[i] == 'L') {
+	    stack_push(tree_rebuilder, node_create(tree[i + 1], 0));
+    }
+        if (tree[i] == 'I') {
+	    Node *right_holder = node_create('#', 0);
+	    Node *left_holder = node_create('#', 0);
+
+	    stack_pop(tree_rebuilder, &right_holder);
+	    stack_pop(tree_rebuilder, &left_holder);
+            
+	    // Make a replica of both dequeued nodes, this is essential since you are writing over the stack
+	    Node *right = node_create(right_holder->symbol, 0);
+	    if (right_holder->left != NULL) {	
+	        right->left = right_holder->left;
+	    }
+	    if (right_holder->right != NULL) {	
+	        right->right = right_holder->right;
+	    }
+	    
+	    Node *left = node_create(left_holder->symbol, 0);
+	    if (left_holder->left != NULL) {	
+	        left->left = left_holder->left;
+	    }
+	    if (left_holder->right != NULL) {	
+	        left->right = left_holder->right;
+	    }
+	    
+	    stack_push(tree_rebuilder, node_join(left, right));
+	}
+    }
+    if (stack_size(tree_rebuilder) != 1) {
+        printf("An error has occured in the tree rebuilding");
+    }
+    Node *return_node = node_create('#', 0);
+    stack_pop(tree_rebuilder, &return_node);
+    return return_node;
 }
 
 void delete_tree(Node **root) {

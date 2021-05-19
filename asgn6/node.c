@@ -13,16 +13,38 @@ Node *node_create(uint8_t symbol, uint64_t frequency) {
     if (n) {
         n->symbol = symbol;
         n->frequency = frequency;
+	n->left = NULL;
+	n->right = NULL;
     }
     return n;
 }
 
 // Free items, then free the stack pointer and set it to null
 void node_delete(Node **n) {
-    if (*n) {
-        //free((*n)->CHILDREN); // FREE CHILDREN NODES PERHAPS
-        free(*n);
+    printf("back at the top");
+    if (*n != NULL) {
+	printf("deleting node\n");
+        if ((*n)->left != NULL) {
+	    printf("node has left child\n");
+            node_print((*n)->left);
+	    node_delete(&(*n)->left);
+        }
+        if (*n == NULL) {
+	    return;
+	}
+        if ((*n)->right != NULL) {
+	    printf("node has right child\n");
+            node_print((*n)->right);
+            node_delete(&(*n)->right);
+        }
+        if (*n == NULL) {
+	    return;
+	}
+        
+	free(*n);
+	printf("deleting node 2\n");
         *n = NULL;
+	printf("deleting node 3\n");
     }
     return;
 }

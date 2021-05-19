@@ -77,7 +77,7 @@ void stack_print(Stack *s) {
     }
     return;
 }
-
+/*
 int main(){ 
     Stack *tester = stack_create(10);
     
@@ -117,4 +117,4 @@ int main(){
 
 
     stack_delete(&tester);
-}
+}*/
