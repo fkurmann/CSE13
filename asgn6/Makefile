@@ -1,7 +1,7 @@
 CC = clang
 CFLAGS = -Wall -Wextra -Wpedantic
 
-all: encode
+all: encode decode
 
 pq: pq.o node.o
 	$(CC) -o pq pq.o node.o -lm 
@@ -12,11 +12,11 @@ stack: stack.o node.o
 code: pq.o code.o
 	$(CC) -o code code.o -lm 
 
-encode: encode.o io.o code.o huffman.o pq.o node.o
-	$(CC) -o encode encode.o io.o code.o huffman.o pq.o node.o -lm 
+encode: encode.o io.o code.o huffman.o pq.o node.o stack.o
+	$(CC) -o encode encode.o io.o code.o huffman.o pq.o node.o stack.o -lm 
 
-decode: decode.o io.o
-	$(CC) -o decode decode.o io.o -lm 
+decode: decode.o io.o code.o huffman.o pq.o node.o stack.o
+	$(CC) -o decode decode.o io.o code.o huffman.o pq.o node.o stack.o -lm 
 
 pq.o: pq.c
 	$(CC) $(CFLAGS) -c pq.c

@@ -47,8 +47,40 @@ int write_bytes(int outfile, uint8_t *buf, int nbytes) {
 }
 
 bool read_bit(int infile, uint8_t *bit) {
+    int last_bit = 8 * BLOCK;
+    // Read from input to bit buffer if the buffer is empty
+    if (buffer_index == 0) {
+        int bytes_read = read_bytes(infile, bit_buffer, BLOCK);
+	// If unable to read a full block, the end of the input has been reached
+	if (bytes_read < BLOCK) {
+	    last_bit = 8 * bytes_read + 1;
+	}
+    }
+    // Pass back bits from the bit_buffer through the bit pointer using bit_vector's get operation
+    uint32_t buffer_byte = buffer_index / 8;
+    uint32_t buffer_bit_in_byte = buffer_index % 8;
+    uint8_t buffer_byte_value = bit_buffer[buffer_byte];
+    buffer_byte_value = buffer_byte_value >> buffer_bit_in_byte;
+    if (buffer_byte_value % 2 == 0) {
+        *bit = 1;
+    }
+    else {
+        *bit = 0;
+    }
+    buffer_index++;
 
-    return false;
+    // If you hit the end of a complete buffer, fill the buffer again with another block from the infile.
+    if (buffer_index == 8 * BLOCK) {
+        buffer_index = 0; 
+    }
+
+    // If you hit the last bit in an incomplete buffer, you have read all bits from infile, return false, else return true
+    if (buffer_index == (uint32_t) last_bit) {
+        return false;
+    }
+    else {
+        return true;
+    }
 }
 
 void write_code(int outfile, Code *c) {
@@ -92,7 +124,7 @@ void write_code(int outfile, Code *c) {
 
 void flush_codes(int outfile) {
     if (buffer_index != 0) {
-        write_bytes(outfile, bit_buffer, BLOCK - (8 * buffer_index));
+        write_bytes(outfile, bit_buffer, buffer_index / 2);
         buffer_index = 0;
 	//printf("Flushing \n");
     }
