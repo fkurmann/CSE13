@@ -17,8 +17,8 @@
 
 // Global variables for read and write functions
 extern uint8_t buffer[BLOCK];
-extern uint64_t bytes_read;
-extern uint64_t bytes_written;
+uint64_t bytes_read;
+uint64_t bytes_written;
 
 // Static variables for bitwise read and write functions
 static uint8_t bit_buffer[BLOCK];
@@ -61,7 +61,7 @@ bool read_bit(int infile, uint8_t *bit) {
     uint32_t buffer_bit_in_byte = buffer_index % 8;
     uint8_t buffer_byte_value = bit_buffer[buffer_byte];
     buffer_byte_value = buffer_byte_value >> buffer_bit_in_byte;
-    if (buffer_byte_value % 2 == 0) {
+    if (buffer_byte_value % 2 != 0) {
         *bit = 1;
     }
     else {
@@ -91,6 +91,7 @@ void write_code(int outfile, Code *c) {
 	uint32_t buffer_bit_in_byte = buffer_index % 8;
         uint8_t buffer_byte_value = bit_buffer[buffer_byte];
 	buffer_byte_value = buffer_byte_value >> buffer_bit_in_byte;
+	
 	// Code indexing variables
 	uint32_t byte = (i / 8);
 	uint32_t bit_in_byte = i % 8;
@@ -106,26 +107,24 @@ void write_code(int outfile, Code *c) {
 	        bit_buffer[buffer_byte] -= pow(2, buffer_bit_in_byte);
 	    }
 	}
+	
 	// Move to next bit in the buffer
         buffer_index++;
+        
+	// Write the buffer to the outfile if it is full, reset buffer index
+        if (buffer_index == 8 * BLOCK) {
+            bytes_written += (uint64_t) write_bytes(outfile, bit_buffer, BLOCK);
+	    buffer_index = 0;
+        }
     }
 
-    // Write the buffer to the outfile if it is full, reset buffer index
-    if (buffer_index == 8 * BLOCK) {
-        write_bytes(outfile, bit_buffer, BLOCK);
-	buffer_index = 0;
-    }
-    // Temporary loop to print the first 10 bytes of the bit buffer
-    for (int i = 0; i < 10; i++) {
-        //printf("%u \n", bit_buffer[i]);
-    }
     return;
 }
 
 void flush_codes(int outfile) {
     if (buffer_index != 0) {
-        write_bytes(outfile, bit_buffer, buffer_index / 2);
-        buffer_index = 0;
+        bytes_written += (uint64_t) write_bytes(outfile, bit_buffer, buffer_index / 8);
+	buffer_index = 0;
 	//printf("Flushing \n");
     }
     return;

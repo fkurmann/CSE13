@@ -48,5 +48,10 @@ clean:
 
 format:
 	clang-format -i -style=file stack.c pq.c node.c code.c encode.c decode.c io.c huffman.c
+
 scan-build: clean
 	scan-build make
+
+test: encode decode
+	./encode -i test.txt -o encoded.txt
+	./decode -i encoded.txt

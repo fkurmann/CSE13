@@ -23,6 +23,7 @@ uint8_t input_buffer[BLOCK];
 uint8_t buffer[BLOCK];
 static uint32_t buffer_index = 0;
 uint32_t bytes_processed, uncorrected_errors, corrected_errors;
+uint64_t bytes_read = 0, bytes_written;
 Code c;
 
 // Command line argument options
@@ -43,12 +44,17 @@ void print_histogram(uint64_t *histogram) {
 
 // Function that does post order traversal of tree to write it to the outfile
 void tree_to_outfile(Node *root, int output_file) {
+    // If a buffer is full, write it to the outfile and start at it's beginning again.
+    if (buffer_index == BLOCK) {
+        bytes_written += (uint64_t) write_bytes(output_file, (uint8_t *) buffer, BLOCK);
+        buffer_index = 0;	
+    }
+
     // If a node is NOT a root or interior node, write L followed by the node to the outfile
-    if (root->symbol != '$') {
+    if (root->symbol != '$' || root->left == NULL || root->right == NULL) {
         buffer[buffer_index] = 'L';
 	buffer_index++;
 	buffer[buffer_index] = root->symbol;
-	//printf("%u \n", buffer[buffer_index]);
 	buffer_index++;
     }
 
@@ -67,6 +73,7 @@ void write_codes(Code table[ALPHABET], uint8_t *input_buffer, int input_length, 
     for (int i = 0; i < input_length; i++) {
 	write_code(output_file, &table[input_buffer[i]]);
     }
+
     flush_codes(output_file);
     return;
 }
@@ -76,7 +83,7 @@ int main(int argc, char **argv) {
     struct stat statbuf;
     bool outfile_given = false, infile_given = false, verbose_printing = false;
     int tree_size = 2; // There will always be at least 2 unique symbols in the tree    
-    
+
     // Create and initilize the histogram    
     uint64_t histogram[ALPHABET];
     for (int i = 0; i < ALPHABET; i++) {
@@ -131,26 +138,31 @@ int main(int argc, char **argv) {
         }
     }
     
+    
     // Read from the input into the buffer
-    int input_length = read_bytes(input_file, input_buffer, BLOCK);
-    //write_bytes(output_file, input_buffer, 10);
+    uint32_t decompressed_size = (uint32_t) statbuf.st_size;
+    int bytes_in = 0;
+    while (bytes_read < (uint64_t) decompressed_size) {
+        // Add bytes_in to bytes_read since bytes_in must be used for histogram making, bytes read may exceed buffer size.
+	bytes_in = read_bytes(input_file, input_buffer, BLOCK);
+        bytes_read += (uint64_t) bytes_in;
 
-    // Create the histogram given the contents of the buffer
-    for (int i = 0; i < input_length; i++) {
-	if (histogram[input_buffer[i]] == 0) {
-	    tree_size++;
-	}
-        histogram[input_buffer[i]]++;
+	// Create the histogram given the contents of the buffer
+        for (int i = 0; i < bytes_in; i++) {
+	    if (histogram[input_buffer[i]] == 0) {
+	        tree_size++;
+	    }
+            histogram[input_buffer[i]]++;
+        }
     }
 
     // Call Huffman functions to build a tree
     Node *tree_root = build_tree(histogram); 
-    //node_print(tree_root);
-    
+
     // Call Huffman functions to make the codes
     c = code_init();
     build_codes(tree_root, code_table);
-    
+   
     // Construct the header 
     struct Header header;
     header.magic = MAGIC;
@@ -159,18 +171,43 @@ int main(int argc, char **argv) {
     header.tree_size = 3 * tree_size - 1;
     
     // Cast the header to an integer and print it to the outfile
-    write_bytes(output_file, (uint8_t *) (&header), sizeof(Header)); 
+    bytes_written += (uint64_t) write_bytes(output_file, (uint8_t *) (&header), sizeof(Header)); 
     
     // Call function to write tree to a buffer, then to the outfile
     tree_to_outfile(tree_root, output_file); 
-    write_bytes(output_file, buffer, buffer_index);
+    bytes_written += (uint64_t) write_bytes(output_file, buffer, buffer_index);
 
     // Call function to write codes to outfile
-    write_codes(code_table, input_buffer, input_length, output_file);
+    // Reread the input buffer by buffer to print the codes for each byte
+    bytes_read = 0;
+    lseek(input_file, 0, SEEK_SET);
+    while (bytes_read < (uint64_t) decompressed_size) {
+        // Add bytes_in to bytes_read since bytes_in must be used for histogram making, bytes read may exceed buffer size.
+	bytes_in = read_bytes(input_file, input_buffer, BLOCK);
+        bytes_read += (uint64_t) bytes_in;
+        
+	// Write the codes for the buffer just filled from infile
+        write_codes(code_table, input_buffer, bytes_in, output_file);
+    }
 
     // Set outfile permissions to equal infile permissions
     if (outfile_given == true) {
         fchmod((output_file), statbuf.st_mode);
+    }
+    
+    // If verbose printing is specified, print info
+    if (verbose_printing == true) {
+	if (output_file == 0) {
+	    printf("\n");
+	}	    
+        //struct stat output_statbuf;
+        //fstat(output_file, &output_statbuf);
+	uint32_t decompressed_size = (uint32_t) statbuf.st_size;
+        uint32_t compressed_size = (uint32_t) bytes_written; 
+        double space_saving = 100 * ( 1 - (double) compressed_size / decompressed_size);
+	fprintf(stderr, "Uncompressed file size: %u bytes \n"
+	    	        "Compressed file size: %u bytes \n"
+		        "Space saving %f%% \n", decompressed_size, compressed_size, space_saving);
     }
 
     // Close the input output files if they were opened.

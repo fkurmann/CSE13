@@ -69,8 +69,7 @@ void build_codes(Node *root, Code table[static ALPHABET]) {
     uint8_t popping_bit = 0;
     
     // If a node is NOT a root or interior node, push completed code
-    if (root->symbol != '$') {
-        //printf("Saving a code \n");
+    if (root->symbol != '$'|| root->left == NULL || root->right == NULL) {
 	table[root->symbol] = c;
 	return;
     }
@@ -87,13 +86,13 @@ void build_codes(Node *root, Code table[static ALPHABET]) {
     return;
 }
 
-Node *rebuild_tree(uint16_t nbytes, uint8_t tree[static nbytes]) {
+Node *rebuild_tree(uint16_t nbytes, uint8_t tree_dump[static nbytes]) {
     Stack *tree_rebuilder = stack_create((uint32_t) nbytes);
     for (uint16_t i = 0; i < nbytes; i++) {
-        if (tree[i] == 'L') {
-	    stack_push(tree_rebuilder, node_create(tree[i + 1], 0));
-    }
-        if (tree[i] == 'I') {
+        if (tree_dump[i] == 'L') {
+	    stack_push(tree_rebuilder, node_create(tree_dump[i + 1], 0));
+        }
+        if (tree_dump[i] == 'I') {
 	    Node *right_holder = node_create('#', 0);
 	    Node *left_holder = node_create('#', 0);
 
@@ -119,9 +118,12 @@ Node *rebuild_tree(uint16_t nbytes, uint8_t tree[static nbytes]) {
 	    
 	    stack_push(tree_rebuilder, node_join(left, right));
 	}
+	stack_print(tree_rebuilder);
     }
     if (stack_size(tree_rebuilder) != 1) {
-        printf("An error has occured in the tree rebuilding");
+        printf("An error has occured in the tree rebuilding\n");
+	printf("Stack size after popping: %u \n", stack_size(tree_rebuilder));
+	stack_print(tree_rebuilder);
     }
     Node *return_node = node_create('#', 0);
     stack_pop(tree_rebuilder, &return_node);

@@ -19,7 +19,7 @@ Stack *stack_create(uint32_t capacity) {
     if (s) {
         s->top = 0;
         s->capacity = capacity;
-        s->items = (Node **) calloc(capacity, sizeof(Node));
+        s->items = (Node **) calloc(capacity, sizeof(Node *));
 
         if (!s->items) {
             free(s);
