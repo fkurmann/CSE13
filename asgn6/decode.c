@@ -83,12 +83,17 @@ int main(int argc, char **argv) {
 	return 1;
     }
 
+    printf("header tree size %u \n", header.tree_size);
+    printf("header file size %lu \n", header.file_size);
+    printf("header permission %u \n", header.permissions);
     // Read the tree section of the input into the tree_dump array, then rebuild the tree based on this array
     uint8_t tree_dump[header.tree_size];
     bytes_read += (uint64_t) read_bytes(input_file, tree_dump, header.tree_size);
    
     Node *tree_root = rebuild_tree(header.tree_size, tree_dump);
     
+    printf("bytes read %lu \n", bytes_read);
+
     // Traverse the tree using the code section of input, add outputs to the output buffer/file
     uint8_t code_bit = 0;
     Node *current_node = tree_root;
@@ -121,6 +126,8 @@ int main(int argc, char **argv) {
     // Write the remainder of the output buffer to the output file
     bytes_written += (uint64_t) write_bytes(output_file, buffer, buffer_index);
             
+    printf("bytes written %lu \n", bytes_read);
+    
     // Delete the reconstructed tree
     delete_tree(&tree_root);
 
@@ -141,7 +148,7 @@ int main(int argc, char **argv) {
     }
     
     // Set outfile permissions to equal infile permissions
-    if (outfile_given == true) {
+    if (outfile_given == true && infile_given == true) {
         fchmod((output_file), statbuf.st_mode);
     }
 

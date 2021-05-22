@@ -113,8 +113,12 @@ void write_code(int outfile, Code *c) {
         
 	// Write the buffer to the outfile if it is full, reset buffer index
         if (buffer_index == 8 * BLOCK) {
-            bytes_written += (uint64_t) write_bytes(outfile, bit_buffer, BLOCK);
+            printf("writing a full block\n");
+	    bytes_written += (uint64_t) write_bytes(outfile, bit_buffer, BLOCK);
 	    buffer_index = 0;
+	    for (int i = 0; i < BLOCK; i++) {
+	        bit_buffer[i] = 0;
+	    }
         }
     }
 
@@ -123,9 +127,8 @@ void write_code(int outfile, Code *c) {
 
 void flush_codes(int outfile) {
     if (buffer_index != 0) {
-        bytes_written += (uint64_t) write_bytes(outfile, bit_buffer, buffer_index / 8);
+        bytes_written += (uint64_t) write_bytes(outfile, bit_buffer, 1 + buffer_index / 8);
 	buffer_index = 0;
-	//printf("Flushing \n");
     }
     return;
 }

@@ -53,5 +53,5 @@ scan-build: clean
 	scan-build make
 
 test: encode decode
-	./encode -i test.txt -o encoded.txt
-	./decode -i encoded.txt
+	./encode -i decode.c -o encoded.txt -v
+	./decode -i encoded.txt -v
