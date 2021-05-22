@@ -67,7 +67,6 @@ int main(int argc, char **argv) {
             input_file = open(infile, O_RDONLY);
             // Check the file permissions and store them
             fstat((input_file), &statbuf);
-
             free(infile);
             break;
 	case 'v':
@@ -79,6 +78,7 @@ int main(int argc, char **argv) {
     struct Header header;
     read_bytes(input_file, (uint8_t *) (&header), sizeof(Header));
     if (header.magic != MAGIC) {
+	printf("Your magic number %u \n", header.magic);
         printf("Error, the magic number of the input file is incompatibe with this decoder. \n");
 	return 1;
     }
@@ -88,7 +88,6 @@ int main(int argc, char **argv) {
     bytes_read += (uint64_t) read_bytes(input_file, tree_dump, header.tree_size);
    
     Node *tree_root = rebuild_tree(header.tree_size, tree_dump);
-
     
     // Traverse the tree using the code section of input, add outputs to the output buffer/file
     uint8_t code_bit = 0;
@@ -122,15 +121,19 @@ int main(int argc, char **argv) {
     // Write the remainder of the output buffer to the output file
     bytes_written += (uint64_t) write_bytes(output_file, buffer, buffer_index);
             
+    // Delete the reconstructed tree
+    delete_tree(&tree_root);
+
+    if (output_file == 0) {
+        printf("\n");
+    }
+
     if (verbose_printing == true) {
 	if (output_file == 0) {
 		printf("\n");
 	}
-        struct stat output_statbuf;
-        fstat(output_file, &output_statbuf);
-        uint32_t decompressed_size = (uint32_t) statbuf.st_size;
-        uint32_t compressed_size = (uint32_t) bytes_written;
-	printf("%lu \n", bytes_written);
+        uint32_t compressed_size = (uint32_t) statbuf.st_size;
+        uint32_t decompressed_size = (uint32_t) bytes_written;
         double space_saving = 100 * ( 1 - (double) compressed_size / decompressed_size);
         fprintf(stderr, "Compressed file size: %u bytes\n"
                         "Decompressed file size: %u bytes\n"

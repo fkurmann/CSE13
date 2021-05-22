@@ -73,8 +73,6 @@ void write_codes(Code table[ALPHABET], uint8_t *input_buffer, int input_length, 
     for (int i = 0; i < input_length; i++) {
 	write_code(output_file, &table[input_buffer[i]]);
     }
-
-    flush_codes(output_file);
     return;
 }
 
@@ -129,7 +127,6 @@ int main(int argc, char **argv) {
             input_file = open(infile, O_RDONLY);
             // Check the file permissions and store them
             fstat((input_file), &statbuf);
-
             free(infile);
             break;
 	case 'v':
@@ -138,11 +135,9 @@ int main(int argc, char **argv) {
         }
     }
     
-    
     // Read from the input into the buffer
-    uint32_t decompressed_size = (uint32_t) statbuf.st_size;
-    int bytes_in = 0;
-    while (bytes_read < (uint64_t) decompressed_size) {
+    int bytes_in = 1;
+    while (bytes_in > 0) {
         // Add bytes_in to bytes_read since bytes_in must be used for histogram making, bytes read may exceed buffer size.
 	bytes_in = read_bytes(input_file, input_buffer, BLOCK);
         bytes_read += (uint64_t) bytes_in;
@@ -176,12 +171,16 @@ int main(int argc, char **argv) {
     // Call function to write tree to a buffer, then to the outfile
     tree_to_outfile(tree_root, output_file); 
     bytes_written += (uint64_t) write_bytes(output_file, buffer, buffer_index);
+    
+    // Delete the tree now
+    delete_tree(&tree_root);
 
     // Call function to write codes to outfile
     // Reread the input buffer by buffer to print the codes for each byte
+    bytes_in = 1;
     bytes_read = 0;
     lseek(input_file, 0, SEEK_SET);
-    while (bytes_read < (uint64_t) decompressed_size) {
+    while (bytes_in > 0) {
         // Add bytes_in to bytes_read since bytes_in must be used for histogram making, bytes read may exceed buffer size.
 	bytes_in = read_bytes(input_file, input_buffer, BLOCK);
         bytes_read += (uint64_t) bytes_in;
@@ -189,25 +188,31 @@ int main(int argc, char **argv) {
 	// Write the codes for the buffer just filled from infile
         write_codes(code_table, input_buffer, bytes_in, output_file);
     }
+    flush_codes(output_file);
 
-    // Set outfile permissions to equal infile permissions
-    if (outfile_given == true) {
-        fchmod((output_file), statbuf.st_mode);
+    if (output_file == 0) {
+	printf("\n");
     }
-    
+
     // If verbose printing is specified, print info
     if (verbose_printing == true) {
-	if (output_file == 0) {
-	    printf("\n");
-	}	    
-        //struct stat output_statbuf;
-        //fstat(output_file, &output_statbuf);
-	uint32_t decompressed_size = (uint32_t) statbuf.st_size;
+	uint32_t decompressed_size;
+        if (infile_given == true) {
+	    decompressed_size = (uint32_t) statbuf.st_size;
+	}
+	else {
+	    decompressed_size = (uint32_t) bytes_read;
+	}
         uint32_t compressed_size = (uint32_t) bytes_written; 
         double space_saving = 100 * ( 1 - (double) compressed_size / decompressed_size);
 	fprintf(stderr, "Uncompressed file size: %u bytes \n"
 	    	        "Compressed file size: %u bytes \n"
 		        "Space saving %f%% \n", decompressed_size, compressed_size, space_saving);
+    }
+    
+    // Set outfile permissions to equal infile permissions
+    if (outfile_given == true && infile_given == true) {
+        fchmod((output_file), statbuf.st_mode);
     }
 
     // Close the input output files if they were opened.

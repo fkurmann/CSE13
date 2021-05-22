@@ -90,12 +90,36 @@ Node *rebuild_tree(uint16_t nbytes, uint8_t tree_dump[static nbytes]) {
     Stack *tree_rebuilder = stack_create((uint32_t) nbytes);
     for (uint16_t i = 0; i < nbytes; i++) {
         if (tree_dump[i] == 'L') {
-	    stack_push(tree_rebuilder, node_create(tree_dump[i + 1], 0));
+	    if (i == 0) {
+	        stack_push(tree_rebuilder, node_create(tree_dump[i + 1], 0));
+	    }
+	    else if (i == 1) {
+	        continue;
+	    }
+            else {
+	        if (tree_dump[i - 1] != 'L') {	
+	            stack_push(tree_rebuilder, node_create(tree_dump[i + 1], 0));
+		}
+	        if (tree_dump[i - 1] == 'L') {
+		    //printf("weird stuff is happening with L\n");	
+	            if (tree_dump[i - 2] == 'L') { 	
+	                stack_push(tree_rebuilder, node_create(tree_dump[i + 1], 0));
+		    }
+		}
+	     }
         }
-        if (tree_dump[i] == 'I') {
+        
+	if (tree_dump[i] == 'I') {
+	    if (tree_dump[i - 1] == 'L' && tree_dump[i - 2] != 'L') {
+		 //printf("weird stuff is happening with I\n");	
+	         continue;
+	    }		 
+	    
 	    Node *right_holder = node_create('#', 0);
 	    Node *left_holder = node_create('#', 0);
 
+	    //printf("%u \n", stack_pop(tree_rebuilder, &right_holder));
+	    //printf("%u \n", stack_pop(tree_rebuilder, &left_holder));
 	    stack_pop(tree_rebuilder, &right_holder);
 	    stack_pop(tree_rebuilder, &left_holder);
             
@@ -118,7 +142,6 @@ Node *rebuild_tree(uint16_t nbytes, uint8_t tree_dump[static nbytes]) {
 	    
 	    stack_push(tree_rebuilder, node_join(left, right));
 	}
-	stack_print(tree_rebuilder);
     }
     if (stack_size(tree_rebuilder) != 1) {
         printf("An error has occured in the tree rebuilding\n");
@@ -131,7 +154,12 @@ Node *rebuild_tree(uint16_t nbytes, uint8_t tree_dump[static nbytes]) {
 }
 
 void delete_tree(Node **root) {
-    return;
+    if ((*root)->left != NULL) {
+        delete_tree(&(*root)->left);
+    }
+    if ((*root)->right != NULL) {
+        delete_tree(&(*root)->right);
+    }
+    node_delete(&(*root));
 }
 
-//DONT FORGET ABOUT MEMORY LEEKS
