@@ -49,10 +49,10 @@ huffman.o: huffman.c
 	$(CC) $(CFLAGS) -c huffman.c
 
 clean:
-	rm -f pq stack code encode decode stack.o pq.o node.o code.o encode.o decode.o io.o huffman.o
+	rm -f pq stack code encode decode entropy stack.o pq.o node.o code.o encode.o decode.o io.o huffman.o
 
 format:
-	clang-format -i -style=file stack.c pq.c node.c code.c encode.c decode.c io.c huffman.c
+	clang-format -i -style=file stack.c pq.c node.c code.c encode.c decode.c io.c huffman.c defines.h header.h node.h pq.h code.h io.h stack.h huffman.h
 
 scan-build: clean
 	scan-build make
