@@ -1,4 +1,5 @@
 #include "pq.h"
+
 #include "node.h"
 
 #include <assert.h>
@@ -36,7 +37,7 @@ PriorityQueue *pq_create(uint32_t capacity) {
 // Free items, then free the queue pointer and set it to null
 void pq_delete(PriorityQueue **pq) {
     if (*pq && (*pq)->items) {
-	free((*pq)->items);
+        free((*pq)->items);
         free(*pq);
         *pq = NULL;
     }
@@ -64,27 +65,25 @@ bool enqueue(PriorityQueue *pq, Node *n) {
     // While loop to determine insertion position for node to enqueue
     while (pq->tail < pq->head) {
         if ((pq->items[pq->tail]).frequency > n->frequency) {
-	    pq->tail++;
-	}
-	else {
-	    break;
-	}
+            pq->tail++;
+        } else {
+            break;
+        }
     }
 
     // Shift all nodes that are effected by the insertion towards the head, insert the node to enqueue
     uint32_t index = pq->head;
     pq->head++;
     while (index > pq->tail) {
-        pq->items[index] = pq->items[index-1];
-	index--;
+        pq->items[index] = pq->items[index - 1];
+        index--;
     }
     pq->items[pq->tail] = *n;
-    
+
     //Return tail to zero and ajust size
     pq->tail = 0;
     return true;
 }
-
 
 // If the queue is empty, return false, otherwise pop a node from its head.
 bool dequeue(PriorityQueue *pq, Node **n) {
@@ -105,31 +104,3 @@ void pq_print(PriorityQueue *pq) {
     }
     return;
 }
-/*
-int main(void) {
-    PriorityQueue *test_queue = pq_create(10);
-    
-    Node *one = node_create('A', 1);
-    Node *two = node_create('B', 246);
-    Node *three = node_create('C', 15);
-    Node *four = node_create('D', 266);
-    Node *five = node_create('D', 13);
-
-    enqueue(test_queue, one);
-    enqueue(test_queue, two);
-    enqueue(test_queue, three);
-    enqueue(test_queue, four);
-    
-    pq_print(test_queue);
-
-    dequeue(test_queue, &five);
-
-    printf("Print the raping queue \n");
-    pq_print(test_queue);
-    printf("And now for the node: \n");
-    node_print(five);
-
-    pq_delete(&test_queue);
-
-    return 0;
-}*/

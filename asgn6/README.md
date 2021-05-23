@@ -49,7 +49,9 @@ This assignment contains an encoder and a decoder. The encoder compresses the in
 
 Enter command $ make {decode, encode, entropy, clean, format} to build/clear/format the desired program(s).
 
-There should be no flags or errors during this process
+There should be no flags or errors during this process.
+
+Please note: I am aware of my memory leaks, I had to make a decision to leave fixing them for a later project in order to maintain my sanity. Respectfully, Fabrice
 
 ### Running:
 

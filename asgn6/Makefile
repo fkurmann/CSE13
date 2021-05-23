@@ -1,5 +1,5 @@
 CC = clang
-CFLAGS = -Wall -Wextra -Wpedantic
+CFLAGS = -Wall -Werror -Wextra -Wpedantic
 
 all: encode decode
 
@@ -53,5 +53,5 @@ scan-build: clean
 	scan-build make
 
 test: encode decode
-	./encode -i decode.c -o encoded.txt -v
+	./encode -i DESIGN.pdf -o encoded.txt -v
 	./decode -i encoded.txt -v

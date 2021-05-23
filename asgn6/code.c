@@ -1,5 +1,6 @@
-#include "defines.h"
 #include "code.h"
+
+#include "defines.h"
 
 #include <assert.h>
 #include <inttypes.h>
@@ -25,7 +26,6 @@ bool code_full(Code *c) {
 uint32_t code_size(Code *c) {
     return c->top;
 }
-
 
 // If the code is full, return false, else push a bit
 bool code_push_bit(Code *c, uint8_t bit) {
@@ -68,51 +68,15 @@ bool code_pop_bit(Code *c, uint8_t *bit) {
 
 void code_print(Code *c) {
     for (uint8_t i = 0; i < code_size(c); i++) {
-        for (uint8_t j = 0; j < 8 && (j + 8*i) < code_size(c); j++) {
-	    // Extract bit values as with Asgn5's get bit
-	    uint8_t byte_value = c->bits[i];
-	    byte_value = byte_value >> j;
-	    byte_value = byte_value % 2;
-	    printf("%u  ", byte_value);
-	}
+        for (uint8_t j = 0; j < 8 && (j + 8 * i) < (uint8_t) code_size(c); j++) {
+            // Extract bit values as with Asgn5's get bit
+            uint8_t byte_value = c->bits[i];
+            byte_value = byte_value >> j;
+            byte_value = byte_value % 2;
+            printf("%u  ", byte_value);
+        }
         printf("   ");
-
     }
     printf("\n");
     return;
 }
-
-// Temporary main method
-/*
-int main () {
-    Code tester = code_init();
-
-    printf("%u \n", code_empty(&tester));
-    printf("%u \n", code_size(&tester));
-
-    code_push_bit(&tester, 1);
-    code_push_bit(&tester, 1);
-    code_push_bit(&tester, 0);
-    code_push_bit(&tester, 1);
-    code_push_bit(&tester, 1);
-    code_push_bit(&tester, 0);
-    code_push_bit(&tester, 1);
-    code_push_bit(&tester, 1);
-    code_push_bit(&tester, 0);
-    code_push_bit(&tester, 1);
-    code_push_bit(&tester, 1);
-    code_push_bit(&tester, 0);
-    code_push_bit(&tester, 1);
-    code_push_bit(&tester, 1);
-
-    uint8_t test_bit = 21;
-    code_pop_bit(&tester, &test_bit);
-    code_pop_bit(&tester, &test_bit);
-    code_pop_bit(&tester, &test_bit);
-    printf("OKAY now printing test_bit (returned from pop) and size\n");
-    printf("%u \n", test_bit);
-    printf("%u \n", code_size(&tester));
-
-    printf("OKAY now printing the code\n");
-    code_print(&tester);
-}*/
