@@ -1,7 +1,7 @@
 CC = clang
 CFLAGS = -Wall -Werror -Wextra -Wpedantic
 
-all: encode decode
+all: encode decode entropy
 
 pq: pq.o node.o
 	$(CC) -o pq pq.o node.o -lm 
@@ -17,6 +17,12 @@ encode: encode.o io.o code.o huffman.o pq.o node.o stack.o
 
 decode: decode.o io.o code.o huffman.o pq.o node.o stack.o
 	$(CC) -o decode decode.o io.o code.o huffman.o pq.o node.o stack.o -lm 
+
+entropy: entropy.o
+	$(CC) -o entropy entropy.o -lm
+
+entropy.o: entropy.c
+	$(CC) $(CFLAGS) -c entropy.c
 
 pq.o: pq.c
 	$(CC) $(CFLAGS) -c pq.c
@@ -41,7 +47,6 @@ io.o: io.c
 
 huffman.o: huffman.c
 	$(CC) $(CFLAGS) -c huffman.c
-
 
 clean:
 	rm -f pq stack code encode decode stack.o pq.o node.o code.o encode.o decode.o io.o huffman.o
