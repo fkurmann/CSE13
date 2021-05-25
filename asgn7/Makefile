@@ -1,22 +1,40 @@
 CC = clang
-CFLAGS = -Wall -Werror -Wextra -Wpedantic
+CFLAGS = -Wall -Wextra -Wpedantic
 
 all: banhammer
 
-encode: encode.o io.o code.o huffman.o pq.o node.o stack.o
-	$(CC) -o encode encode.o io.o code.o huffman.o pq.o node.o stack.o -lm 
+banhammer: banhammer.o speck.o ht.o ll.o bf.o bc.o parser.o node.o 
+	$(CC) -0 banhammer banhammer.o speck.o ht.o ll.o bf.o bv.o parser.o node.o test.o -lm 
 
-decode: decode.o io.o code.o huffman.o pq.o node.o stack.o
-	$(CC) -o decode decode.o io.o code.o huffman.o pq.o node.o stack.o -lm 
+banhammer.o: banhammer.c
+	$(CC) $(CFLAGS) -c banhammer.c
+
+speck.o: speck.c
+	$(CC) $(CFLAGS) -c speck.c
+
+ht.o: ht.c
+	$(CC) $(CFLAGS) -c ht.c
+
+ll.o: ll.c
+	$(CC) $(CFLAGS) -c ll.c
+
+bf.o: bf.c
+	$(CC) $(CFLAGS) -c bf.c
+
+bv.o: bv.c
+	$(CC) $(CFLAGS) -c bv.c
+
+parser.o: parser.c
+	$(CC) $(CFLAGS) -c parser.c
 
 node.o: node.c
 	$(CC) $(CFLAGS) -c node.c
 
-io.o: io.c
-	$(CC) $(CFLAGS) -c io.c
+test.o: test.c
+	$(CC) $(CFLAGS) -c test.c
 
 clean:
-	rm -f banhammer banhammer.o  speck.o ht.o ll.o node.o bf.o bv.o parser.o
+	rm -f banhammer test banhammer.o speck.o ht.o ll.o node.o bf.o bv.o parser.o test.o
 
 format:
 	clang-format -i -style=file banhammer.c messages.h speck.h speck.c ht.h ht.c ll.h ll.c node.h node.c bf.h bf.c bv.h bv.c parser.h parser.c
@@ -24,6 +42,6 @@ format:
 scan-build: clean
 	scan-build make
 
-test: encode decode
-	./encode -i DESIGN.pdf -o encoded.txt -v
-	./decode -i encoded.txt -v
+test: test.o bv.o bf.o speck.o node.o ll.o
+	$(CC) -o test test.o bv.o bf.o speck.o node.o ll.o -lm 
+	./test

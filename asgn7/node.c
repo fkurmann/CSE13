@@ -19,8 +19,8 @@ Node *node_create(char *oldspeak, char *newspeak) {
 	if (newspeak == NULL) {
 	    n->newspeak = NULL;
 	} else {
-	    n->newspeak = (char *) malloc(sizeof(newspeak));
-	    for (uint64_t i = 0; i < sizeof(newspeak); i++) {
+	    n->newspeak = (char *) malloc(strlen(newspeak) + 1);
+	    for (uint64_t i = 0; i <= strlen(newspeak); i++) {
 	        n->newspeak[i] = newspeak[i];
 	    }
 	}
