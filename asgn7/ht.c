@@ -19,7 +19,7 @@ struct HashTable{
     bool mtf;
     LinkedList **lists;
 };
-
+HashTable *ht_create(uint32_t  size , bool  mtf) {2    HashTable *ht = (HashTable  *)  malloc(sizeof(HashTable));3    if (ht) {4      //  Leviathan5      ht ->salt [0] = 0x9846e4f157fe8840;6      ht ->salt [1] = 0xc5f318d7e055afb8;7      ht ->size = size;8      ht ->mtf = mtf;9      ht ->lists = (LinkedList  **)  calloc(size , sizeof(LinkedList  *));10      if (!ht->lists) {11         free(ht);12         ht = NULL;13      }14    }15    return  ht;16 }
 BloomFilter *bf_create(uint32_t size) {
     return bf;
 }
