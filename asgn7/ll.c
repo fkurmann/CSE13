@@ -1,14 +1,10 @@
-#include <assert.h>
-#include <fcntl.h>
-#include <getopt.h>
+#include "ll.h"
+
 #include <inttypes.h>
-#include <math.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/stat.h>
-#include <unistd.h>
 
 // Variables if needed
 
@@ -21,15 +17,26 @@ struct LinkedList {
 };
 
 LinkedList *ll_create(bool mtf) {
+    LinkedList *l = (LinkedList *) malloc(sizeof(LinkedList));
+    ll->mtf = mtf;
+    ll->head = node_create("Head", NULL);
+    ll->tail = node_create("Tail", NULL);
+    ll->length = 0;
     return;
 }
 
 ll_delete(LinkedList **ll) {
+    if (*ll) {
+        node_delete(&(*ll)->head);
+        node_delete(&(*ll)->tail);
+	free(*ll);
+	*ll = NULL;
+    }
     return;
 }
 
 uint32_t ll_length(LinkedList *ll) {
-    return;
+    return ll->length;
 }
 
 Node *ll_lookup(LinkedList *ll, char *oldspeak) {

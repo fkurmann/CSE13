@@ -69,7 +69,11 @@ uint8_t bv_get_bit(BitVector *v, uint32_t i) {
 
 // Clear a bit by reversing the set bit process, subtracting 2 to the power of [position]
 void bv_clr_bit(BitVector *v, uint32_t i) {
+    // If a bit is out of range of a bit is already zero, don't do anything
     if (i >= v->length) {
+        return;
+    }
+    if (bv_get_bit(v, i) == 0) {
         return;
     }
     uint32_t byte = (i / 8);
