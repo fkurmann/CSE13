@@ -42,6 +42,6 @@ format:
 scan-build: clean
 	scan-build make
 
-test: test.o bv.o bf.o speck.o node.o ll.o
-	$(CC) -o test test.o bv.o bf.o speck.o node.o ll.o -lm 
+test: test.o bv.o bf.o speck.o node.o ll.o ht.o
+	$(CC) -o test test.o bv.o bf.o speck.o node.o ll.o ht.o -lm 
 	./test
