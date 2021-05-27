@@ -23,9 +23,7 @@ HashTable *ht_create(uint32_t  size , bool  mtf) {
         //  Leviathan
 	ht->salt[0] = 0x9846e4f157fe8840;
   	ht->salt[1] = 0xc5f318d7e055afb8;
-    printf("%u \n", size);
 	ht->size = size;
-    printf("%u \n", ht->size);
 	ht->mtf = mtf;
 	ht->lists = (LinkedList  **)  calloc(size , sizeof(LinkedList  *));
 	if (!ht->lists) {
@@ -55,10 +53,21 @@ void ht_delete(HashTable **ht) {
 uint32_t ht_size(HashTable *ht) {
     return ht->size;
 }
-/*
+
 Node *ht_lookup(HashTable *ht, char *oldspeak) {
-    return;
-}*/
+    // Create a variable which is the hashed version of oldspeak, adjusted for the size of the hashtable
+    uint32_t hash_value = 0; 
+    hash_value = hash(ht->salt, oldspeak);
+    hash_value = hash_value % ht->size;
+    
+    // Check if there is a linked list at this index, if not, immediatly return NULL.
+    if (ht->lists[hash_value] == NULL) {
+        return NULL;
+    }
+
+    // Else, search the linked list for the node to lookup
+    return ll_lookup(ht->lists[hash_value], oldspeak);
+}
 
 void ht_insert(HashTable *ht, char *oldspeak, char *newspeak) {
     // Create a variable which is the hashed version of oldspeak, adjusted for the size of the hashtable

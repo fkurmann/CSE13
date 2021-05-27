@@ -42,8 +42,11 @@ uint32_t bv_length(BitVector *v) {
 }
 
 // Set a bit by finding the byte it belongs to then updating that byte accordingly based on 2 to the power of [position]
-void bv_set_bit(BitVector *v, uint32_t i) {
+void bv_set_bit_old(BitVector *v, uint32_t i) {
     if (i >= v->length) {
+        return;
+    }
+    if (bv_get_bit(v, i) == 1) {
         return;
     }
     uint32_t byte = (i / 8);
@@ -51,6 +54,19 @@ void bv_set_bit(BitVector *v, uint32_t i) {
     v->vector[byte] += pow(2, bit_in_byte);
     return;
 }
+void bv_set_bit(BitVector *v, uint32_t i) {
+    if (i >= v->length) {
+        return;
+    }
+    uint32_t byte = (i >> 3);  // Divide by 8
+    uint32_t bit_in_byte = i % 8;
+    uint8_t mask = 1;
+    mask <<= bit_in_byte;
+
+    v->vector[byte] |=  mask;
+    return;
+}
+
 
 // Get a bit by shifting the correct byte in the vector until the bit in question is in the one's place. Check if number is odd/even.
 uint8_t bv_get_bit(BitVector *v, uint32_t i) {
