@@ -3,8 +3,8 @@ CFLAGS = -Wall -Wextra -Wpedantic
 
 all: banhammer
 
-banhammer: banhammer.o speck.o ht.o ll.o bf.o bv.o parser.o node.o 
-	$(CC) -o banhammer banhammer.o speck.o ht.o ll.o bf.o bv.o parser.o node.o -lm 
+banhammer: banhammer.o speck.o ht.o ll.o bf.o bv.o parser.o node.o llu.o 
+	$(CC) -o banhammer banhammer.o speck.o ht.o ll.o bf.o bv.o parser.o node.o llu.o -lm 
 
 banhammer.o: banhammer.c
 	$(CC) $(CFLAGS) -c banhammer.c
@@ -17,6 +17,9 @@ ht.o: ht.c
 
 ll.o: ll.c
 	$(CC) $(CFLAGS) -c ll.c
+
+llu.o: llu.c
+	$(CC) $(CFLAGS) -c llu.c
 
 bf.o: bf.c
 	$(CC) $(CFLAGS) -c bf.c
@@ -42,6 +45,6 @@ format:
 scan-build: clean
 	scan-build make
 
-test: test.o bv.o bf.o speck.o node.o ll.o ht.o
-	$(CC) -o test test.o bv.o bf.o speck.o node.o ll.o ht.o -lm 
+test: test.o bv.o bf.o speck.o node.o ll.o ht.o parser.o
+	$(CC) -o test test.o bv.o bf.o speck.o node.o ll.o ht.o parser.o -lm 
 	./test
