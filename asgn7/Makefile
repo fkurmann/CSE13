@@ -1,5 +1,5 @@
 CC = clang
-CFLAGS = -Wall -Wextra -Wpedantic
+CFLAGS = -Wall -Werror -Wextra -Wpedantic
 
 all: banhammer
 
@@ -37,10 +37,10 @@ test.o: test.c
 	$(CC) $(CFLAGS) -c test.c
 
 clean:
-	rm -f banhammer test banhammer.o speck.o ht.o ll.o node.o bf.o bv.o parser.o test.o
+	rm -f banhammer test banhammer.o speck.o ht.o ll.o llu.o node.o bf.o bv.o parser.o test.o
 
 format:
-	clang-format -i -style=file banhammer.c messages.h speck.h speck.c ht.h ht.c ll.h ll.c node.h node.c bf.h bf.c bv.h bv.c parser.h parser.c
+	clang-format -i -style=file banhammer.c messages.h speck.h speck.c ht.h ht.c ll.h ll.c llu.h llu.c node.h node.c bf.h bf.c bv.h bv.c parser.h parser.c
 
 scan-build: clean
 	scan-build make

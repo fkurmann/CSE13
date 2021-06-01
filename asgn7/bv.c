@@ -58,15 +58,14 @@ void bv_set_bit(BitVector *v, uint32_t i) {
     if (i >= v->length) {
         return;
     }
-    uint32_t byte = (i >> 3);  // Divide by 8
+    uint32_t byte = (i >> 3); // Divide by 8
     uint32_t bit_in_byte = i % 8;
     uint8_t mask = 1;
     mask <<= bit_in_byte;
 
-    v->vector[byte] |=  mask;
+    v->vector[byte] |= mask;
     return;
 }
-
 
 // Get a bit by shifting the correct byte in the vector until the bit in question is in the one's place. Check if number is odd/even.
 uint8_t bv_get_bit(BitVector *v, uint32_t i) {

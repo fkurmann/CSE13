@@ -1,4 +1,5 @@
 #include "bf.h"
+
 #include "bv.h"
 #include "speck.h"
 
@@ -24,8 +25,8 @@ struct BloomFilter {
     BitVector *filter;
 };*/
 
-BloomFilter *bf_create(uint32_t  size) {
-    BloomFilter *bf = (BloomFilter *)  malloc(sizeof(BloomFilter));
+BloomFilter *bf_create(uint32_t size) {
+    BloomFilter *bf = (BloomFilter *) malloc(sizeof(BloomFilter));
     if (bf) {
         //  Grimm's Fairy  Tales
         bf->primary[0] = 0x5adf08ae86d36f21;
@@ -39,17 +40,17 @@ BloomFilter *bf_create(uint32_t  size) {
         bf->filter = bv_create(size);
         if (!bf->filter) {
             free(bf);
-	    bf = NULL;
+            bf = NULL;
         }
     }
-    return  bf;
+    return bf;
 }
 
 void bf_delete(BloomFilter **bf) {
     if (*bf && (*bf)->filter) {
-	bv_delete(&((*bf)->filter));
+        bv_delete(&((*bf)->filter));
         free(*bf);
-	*bf = NULL;
+        *bf = NULL;
     }
     return;
 }
@@ -80,19 +81,19 @@ bool bf_probe(BloomFilter *bf, char *oldspeak) {
     uint32_t hash_one = hash(bf->primary, oldspeak);
     uint32_t hash_two = hash(bf->secondary, oldspeak);
     uint32_t hash_three = hash(bf->tertiary, oldspeak);
-    
+
     // Adjust hash values for bf size
     hash_one %= bv_length(bf->filter);
     hash_two %= bv_length(bf->filter);
     hash_three %= bv_length(bf->filter);
-    
+
     // Get the bits of your bit vector assiciated with the hashed values for oldspeak
     uint8_t index_one = bv_get_bit(bf->filter, hash_one);
     uint8_t index_two = bv_get_bit(bf->filter, hash_two);
     uint8_t index_three = bv_get_bit(bf->filter, hash_three);
     if (index_one == 1 && index_two == 1 && index_three == 1) {
         return true;
-    } else{
+    } else {
         return false;
     }
 }
@@ -101,8 +102,8 @@ uint32_t bf_count(BloomFilter *bf) {
     uint32_t count = 0;
     for (uint32_t i = 0; i < bf_size(bf); i++) {
         if (bv_get_bit(bf->filter, i) == 1) {
-	    count++;
-	}
+            count++;
+        }
     }
     return count;
 }

@@ -1,31 +1,31 @@
 #include "node.h"
 
-#include <string.h>
 #include <inttypes.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 // Create a node with the specified symbol and frequency
 Node *node_create(char *oldspeak, char *newspeak) {
     Node *n = (Node *) malloc(sizeof(Node));
     if (n) {
-        // Set node's pointer to oldspeak  	
+        // Set node's pointer to oldspeak
         n->oldspeak = (char *) malloc(strlen(oldspeak) + 1);
-	for (uint64_t i = 0; i <= strlen(oldspeak); i++) {
-	    n->oldspeak[i] = oldspeak[i];
-	}
-        
-	// If a newspeak is given, set the node's pointer to newspeak
-	if (newspeak == NULL) {
-	    n->newspeak = NULL;
-	} else {
-	    n->newspeak = (char *) malloc(strlen(newspeak) + 1);
-	    for (uint64_t i = 0; i <= strlen(newspeak); i++) {
-	        n->newspeak[i] = newspeak[i];
-	    }
-	}
+        for (uint64_t i = 0; i <= strlen(oldspeak); i++) {
+            n->oldspeak[i] = oldspeak[i];
+        }
 
-	n->next= NULL;
+        // If a newspeak is given, set the node's pointer to newspeak
+        if (newspeak == NULL) {
+            n->newspeak = NULL;
+        } else {
+            n->newspeak = (char *) malloc(strlen(newspeak) + 1);
+            for (uint64_t i = 0; i <= strlen(newspeak); i++) {
+                n->newspeak[i] = newspeak[i];
+            }
+        }
+
+        n->next = NULL;
         n->prev = NULL;
     }
     return n;
@@ -38,7 +38,7 @@ void node_delete(Node **n) {
         free((*n)->oldspeak);
         if ((*n)->newspeak) {
             free((*n)->newspeak);
-	}
+        }
         free(*n);
         *n = NULL;
     }
@@ -52,7 +52,7 @@ void node_print(Node *n) {
     } else {
         printf("%s -> %s \n", n->oldspeak, n->newspeak);
     }
-    
+
     // More in depth printing, for debugging only
     /*
     // Show previous and next pointers if applicable
@@ -62,6 +62,6 @@ void node_print(Node *n) {
     if (n->prev) {
         printf("Previous Node: %s \n", (n->prev)->oldspeak);
     }*/
-    
+
     return;
 }
