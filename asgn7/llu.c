@@ -96,12 +96,13 @@ void llu_insert(LinkedListUntracked *llu, char *oldspeak, char *newspeak) {
 
 void llu_print(LinkedListUntracked *llu) {
     Node *current_node;
-    for (Node *current_node = llu->head; current_node != NULL; current_node = current_node->next) {
-        if (strcmp(current_node->oldspeak, "Head") == 0 && strcmp(current_node->oldspeak, "Tail") == 0) {
-	    node_print(current_node);
-	}
+    for (current_node = llu->head; current_node != NULL; current_node = current_node->next) {
+        if (strcmp(current_node->oldspeak, "Head") != 0 && strcmp(current_node->oldspeak, "Tail") != 0) {
+            node_print(current_node);
+        }
     }
     node_delete(&current_node);
 
     return;
 }
+

@@ -1,67 +1,66 @@
-## Assignment 6
+## Assignment 7
 
 This assignment contains an encoder and a decoder. The encoder compresses the input file using Huffman coding, it may then return statitics on the file compression and send the compressed file to an output file. The decoder restores the compressed file it is given using the Huffman algorithm in reverse. It may then also return statitics on the decoding and send the decoded file to an output file.
 
 ### Files:
 
-**---encode.c:** The function which checks command line args, calls for an input to be read, calls the huffman algorithms, and calls for an output to be written.
+**--banhammer.c:** Contains the main method which calls on abstract data types and other files' function to run the bloom filtering on input text.
 
-**---decode.c:** The function which checks command line args, calls for an input to be read, calls the huffman algorithms, and calls for an output to be written.
+**--messages.h:** Defines mixspeak, badspeak, goodspeak messages used in banhammer.c.
 
-**---entropy.c:** Quantifies information from the encoding and decoding processes.
+**---speck.h:** Contains the prototype for the speck cipher.
 
-**---defines.h:** Contains macro defenitions used throughout the assignment.
+**---speck.c:** Contains the implementation of the hash functions using the speck cipher.
 
-**---header.h:** Contains structure defneition for the file header.
+**---ht.h:** Contains the prototype for the ht.c
+
+**---ll.h:** Contains the prototype for ll.c.
 
 **---node.h:** Contains the prototype for node.c.
 
-**---pq.h:** Contains the prototype for pq.c.
+**---bf.h:** Contains the prototype for bf.c.
 
-**---code.h:** Contains the prototype for code.c.
+**---bv.h:** Contains the prototype for bv.c.
 
-**---io.h:** Contains the prototype for io.c.
+**---parser.h:** Contains the prototype for parser.c.
 
-**---stack.h:** Contains the prototype for stack.c.
+**---ht.c:** Contains the implementation of the hash table ADT.
 
-**---huffman.h:** Contains the prototype for huffman.c.
+**---ll.c:** Contains the implementation of the linked list ADT.
 
 **---node.c:** Contains the implementation of the node ADT.
 
-**---pq.h:** Contains the implementation of the priority queue ADT.
+**---bf.c:** Contains the implementation of the bloom filter ADT.
 
-**---code.h:** Contains the implementation of the code (a bitwise stack) ADT.
+**---bv.c:** Contains the implementation of the bit vector.
 
-**---io.h:** Contains the implementation of the input/output (via read/write systalls) ADT.
-
-**---stack.h:** Contains the implementation of the stack ADT.
-
-**---huffman.h:** Contains the implementation of the huffman encoding and decoding alorithtms including building a tree, building codes, rebuilding a tree, and deleting a tree.
+**---parser.c:** Contains the implementation of the regex parser for input strings.
 
 **---Makefile:** The makefile which creates object files for the various ADTs and encode/decode functions, then links the files to create a excecutable binary files encode and decode. Also removes old files and can be called to style all files.
 
 **---README.md:** Markdown file containing instructions to run and build this program.
 
-**---DESIGN.pdf:** Design document showing function requirements, drawings used to visualize the ADTs and the encoding/decoding process, pseudocode for my functions, and general observations during the project.
+**---DESIGN.pdf:** Design document showing function requirements, drawings used to visualize the ADTs and the filtering process, pseudocode for my functions, and general observations during the project.
 
+**---WRITEUP.pdf:** Design document showing function requirements, drawings used to visualize the ADTs and the encoding/decoding process, pseudocode for my functions, and general observations during the project.
 
 ### Build:
 
-Enter command $ make {decode, encode, entropy, clean, format} to build/clear/format the desired program(s).
+Enter command $ make {<>, all, clean, format} to build/clear/format the desired program(s).
 
-There should be no flags or errors during this process.
-
-Please note: I am aware of my memory leaks, I had to make a decision to leave fixing them for a later project in order to maintain my sanity. Respectfully, Fabrice
+There should be no flags or errors during the scan-build process.
 
 ### Running:
 
-Enter command $ ./encode OR $ ./decode to encode, send, and decode files from files.
+Enter command $ ./banhammer (-h -t -f -m -s).
 
-**-h** Print help message describing the program and its command line options
+**-h** Print help message describing the program and its command line options.
 
-**-v** Enable verbose printing, printing information on the error quantity and probability during decoding.
+**-t** Follow with the desired size of the hash table. Default is 10000
 
-**-i** Follow with the name of the input file contianing uint8s that contain the bitwise information to encode/decode. If none is specified, command line is input.
+**-f** Follow with the desired size of the Bloom filter. Default is 2^20
 
-**-o** Follow with the name of the output file to print encoded/decoded bits to in the for of uint8s. If none is specified, command line is output.
+**-m** Enable the move to front rule.
+
+**-s** Enable printing of statistics to stdout.
 

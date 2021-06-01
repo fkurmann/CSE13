@@ -52,14 +52,16 @@ void node_print(Node *n) {
     } else {
         printf("%s -> %s \n", n->oldspeak, n->newspeak);
     }
-
+    
+    // More in depth printing, for debugging only
+    /*
     // Show previous and next pointers if applicable
     if (n->next) {
         printf("Next Node: %s \n", (n->next)->oldspeak);
     }
     if (n->prev) {
         printf("Previous Node: %s \n", (n->prev)->oldspeak);
-    }
+    }*/
     
     return;
 }

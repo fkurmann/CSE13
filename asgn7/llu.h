@@ -13,7 +13,7 @@ typedef struct LinkedListUntracked LinkedListUntracked;
 
 LinkedListUntracked *llu_create(bool mtf);
 
-void ll_delete(LinkedListUntracked **llu);
+void llu_delete(LinkedListUntracked **llu);
 
 uint32_t llu_length(LinkedListUntracked *llu);
 
